@@ -1,2 +1,2 @@
-release: sh migrate.
+release: goose up
 worker: main
