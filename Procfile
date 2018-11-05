@@ -1,2 +1,2 @@
-release: goose up
+release: ./goose up
 worker: main
