@@ -24,6 +24,10 @@
 #   go-tests = true
 #   unused-packages = true
 
+[metadata.heroku]
+  root-package = "github.com/teimurjan/go-els-tg-bot"
+  go-version = "1.10.3"
+  ensure="true"
 
 [[constraint]]
   name = "github.com/go-sql-driver/mysql"
