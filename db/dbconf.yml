@@ -1,0 +1,6 @@
+development:
+    driver: mysql
+    open: $MYSQL_USER:$MYSQL_PASSWORD@tcp($DB_HOST:$DB_PORT)/$MYSQL_DATABASE?parseTime=true
+production:
+    driver: mysql
+    open: $MYSQL_USER:$MYSQL_PASSWORD@tcp($DB_HOST:$DB_PORT)/$MYSQL_DATABASE?parseTime=true

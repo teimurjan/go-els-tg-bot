@@ -1,0 +1,11 @@
+version: "3"
+services:
+  db:
+    restart: always
+    image: mysql
+    env_file:
+      - .env
+    ports:
+      - "9906:3306"
+    volumes:
+      - "./docker-db:/var/lib/mysql"
