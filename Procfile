@@ -1,2 +1,2 @@
-release: ./bin/goose-linux-amd64 -env production up
+release: goose ./bin/goose mysql $DB_URL up
 worker: main
