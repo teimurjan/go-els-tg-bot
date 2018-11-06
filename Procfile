@@ -1,2 +1,2 @@
-release: goose -env production up
+release: ./goose-linux-amd64 -env production up
 worker: main

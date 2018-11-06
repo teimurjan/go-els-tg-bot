@@ -4,3 +4,4 @@ vendor
 docker-db
 main
 migrate.sh
+build_goose.sh
