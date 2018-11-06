@@ -2,10 +2,10 @@ version: "3"
 services:
   db:
     restart: always
-    image: mysql
+    image: postgres
     env_file:
       - .env
     ports:
-      - "9906:3306"
+      - "5432:5432"
     volumes:
-      - "./docker-db:/var/lib/mysql"
+      - "./docker-db:/var/lib/postgresql/data"

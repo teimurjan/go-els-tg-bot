@@ -18,14 +18,6 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:adea5a94903eb4384abef30f3d878dc9ff6b6b5b0722da25b82e5169216dfb61"
-  name = "github.com/go-sql-driver/mysql"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "d523deb1b23d913de5bdada721a6071e71283618"
-  version = "v1.4.0"
-
-[[projects]]
   digest = "1:51712f342cdefcad2c867f399a3ce8223675221d4386c81cfcccd8f0656e722e"
   name = "github.com/go-telegram-bot-api/telegram-bot-api"
   packages = ["."]
@@ -64,6 +56,17 @@
   version = "v1.3.0"
 
 [[projects]]
+  digest = "1:8ef506fc2bb9ced9b151dafa592d4046063d744c646c1bbe801982ce87e4bc24"
+  name = "github.com/lib/pq"
+  packages = [
+    ".",
+    "oid",
+  ]
+  pruneopts = "UT"
+  revision = "4ded0e9383f75c197b3a2aaa6d590ac52df6fd79"
+  version = "v1.0.0"
+
+[[projects]]
   digest = "1:420817f94b6c172dabb8a054d0b2d257d7437a87c7c8c7ee432bc008a577fc46"
   name = "github.com/technoweenie/multipartstreamer"
   packages = ["."]
@@ -82,24 +85,16 @@
   pruneopts = "UT"
   revision = "b7e296877c6e5e01665044d943c8e6d10ce72a99"
 
-[[projects]]
-  digest = "1:c25289f43ac4a68d88b02245742347c94f1e108c534dda442188015ff80669b3"
-  name = "google.golang.org/appengine"
-  packages = ["cloudsql"]
-  pruneopts = "UT"
-  revision = "4a4468ece617fc8205e99368fa2200e9d1fad421"
-  version = "v1.3.0"
-
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
     "github.com/PuerkitoBio/goquery",
-    "github.com/go-sql-driver/mysql",
     "github.com/go-telegram-bot-api/telegram-bot-api",
     "github.com/jmoiron/sqlx",
     "github.com/joho/godotenv/autoload",
     "github.com/kelseyhightower/envconfig",
+    "github.com/lib/pq",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

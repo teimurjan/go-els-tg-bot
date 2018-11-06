@@ -35,7 +35,7 @@ type app struct {
 }
 
 func NewApp(conf *config.Config) *app {
-	db, err := storage.NewMySQL(conf)
+	db, err := storage.NewPostgreSQL(conf)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -46,8 +46,8 @@ func NewApp(conf *config.Config) *app {
 	}
 
 	reposContainer := containers.NewRepositoriesContainer(
-		userRepository.NewMysqlUserRepository(db),
-		trackingRepository.NewMysqlTrackingRepository(db),
+		userRepository.NewPostgresqlUserRepository(db),
+		trackingRepository.NewPostgresqlTrackingRepository(db),
 	)
 
 	servicesContainer := containers.NewServicesContainer(
