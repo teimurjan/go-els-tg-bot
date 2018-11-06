@@ -4,5 +4,6 @@ vendor
 docker-db
 main
 migrate.sh
-build_goose.sh
+build_for_linux.sh
 .DS_Store
+*.log

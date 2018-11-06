@@ -1,2 +1,2 @@
 release: ./bin/goose -dir ./migrations/postgresql postgres $DB_URL up
-worker: main.go
+worker: ./bin/go-els-tg-bot
