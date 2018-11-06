@@ -7,6 +7,7 @@ import (
 	"github.com/teimurjan/go-els-tg-bot/application"
 	"github.com/teimurjan/go-els-tg-bot/config"
 	"github.com/teimurjan/go-els-tg-bot/containers"
+	"github.com/teimurjan/go-els-tg-bot/logging"
 )
 
 type app struct {
@@ -21,6 +22,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	app := application.NewApp(c)
+	logger := logging.NewLogger(c)
+	app := application.NewApp(c, logger)
 	app.Start()
 }

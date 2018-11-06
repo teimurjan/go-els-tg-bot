@@ -8,6 +8,7 @@ type Config struct {
 	UseWebhook       bool   `envconfig:"USE_WEBHOOK"`
 	HerokuBaseUrl    string `envconfig:"HEROKU_BASE_URL"`
 	Debug            bool   `envconfig:"DEBUG"`
+	LogFile          string `envconfig:"LOG_FILE"`
 }
 
 func NewConfig() (*Config, error) {

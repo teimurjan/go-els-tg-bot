@@ -2,9 +2,10 @@ package application
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"time"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/jmoiron/sqlx"
@@ -27,6 +28,7 @@ import (
 
 type app struct {
 	conf              *config.Config
+	logger            *logrus.Logger
 	db                *sqlx.DB
 	bot               *tgbotapi.BotAPI
 	reposContainer    *containers.RepositoriesContainer
@@ -34,15 +36,15 @@ type app struct {
 	handlersContainer *containers.HandlersContainer
 }
 
-func NewApp(conf *config.Config) *app {
+func NewApp(conf *config.Config, logger *logrus.Logger) *app {
 	db, err := storage.NewPostgreSQL(conf)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal("Can't create a database connection.", err)
 	}
 
 	bot, err := builder.MakeTelegramBot(conf)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal("Can't create a telegram bot.", err)
 	}
 
 	reposContainer := containers.NewRepositoriesContainer(
@@ -66,6 +68,7 @@ func NewApp(conf *config.Config) *app {
 
 	return &app{
 		conf,
+		logger,
 		db,
 		bot,
 		reposContainer,
@@ -77,7 +80,7 @@ func NewApp(conf *config.Config) *app {
 func (app *app) Start() {
 	updates, err := app.getBotUpdates()
 	if err != nil {
-		log.Fatal(err)
+		app.logger.Fatal("Can't get bot updates.", err)
 	}
 	app.startCheckingUpdates()
 	for update := range updates {
@@ -92,17 +95,21 @@ func (app *app) Start() {
 func (app *app) getBotUpdates() (tgbotapi.UpdatesChannel, error) {
 	if !app.conf.UseWebhook {
 		updateConfig := builder.MakeTelegramBotUpdateConfig()
+		app.logger.Info("Start polling.")
 		return app.bot.GetUpdatesChan(*updateConfig)
 	}
+
 	_, err := app.bot.SetWebhook(
 		tgbotapi.NewWebhookWithCert(app.conf.HerokuBaseUrl+app.bot.Token, "cert.pem"),
 	)
 	if err != nil {
+		app.logger.Fatal("There is a problem in setting webhook.", err)
 		return nil, err
 	}
-
 	updates := app.bot.ListenForWebhook("/" + app.bot.Token)
 	go http.ListenAndServeTLS("0.0.0.0:8443", "cert.pem", "key.pem", nil)
+
+	app.logger.Info("Webhook is successfully set.")
 	return updates, nil
 }
 
