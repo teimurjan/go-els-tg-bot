@@ -1,2 +1,2 @@
-release: go get bitbucket.org/liamstask/goose/cmd/goose && goose up
+release: goose -env production up
 worker: main

@@ -90,7 +90,7 @@ func (app *app) Start() {
 }
 
 func (app *app) getBotUpdates() (tgbotapi.UpdatesChannel, error) {
-	if app.conf.UseWebhook {
+	if !app.conf.UseWebhook {
 		updateConfig := builder.MakeTelegramBotUpdateConfig()
 		return app.bot.GetUpdatesChan(*updateConfig)
 	}

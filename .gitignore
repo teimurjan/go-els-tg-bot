@@ -3,3 +3,4 @@ vendor
 .vscode
 docker-db
 main
+migrate.sh
