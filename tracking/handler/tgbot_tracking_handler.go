@@ -53,6 +53,11 @@ func (h *tgbotTrackingHandler) GetAll(chatID int64) {
 		return
 	}
 
+	if len(trackings) == 0 {
+		h.bot.Send(tgbotapi.NewMessage(chatID, texts.NoTrackingsAdded))
+		return
+	}
+
 	for _, tracking := range trackings {
 		inlineBtns := tgbotapi.NewInlineKeyboardMarkup(
 			[]tgbotapi.InlineKeyboardButton{
