@@ -1,8 +1,12 @@
 # go-els-tg-bot
 
+<center>
+
 |                 ![](docs/images/logo.png)                 |
 | :-------------------------------------------------------: |
 | <sup>Created with [Gopherize](https://gopherize.me)</sup> |
+
+</center>
 
 The project is created in educational purposes during my Go learning path.
 
