@@ -9,6 +9,7 @@ type Config struct {
 	HerokuBaseUrl    string `envconfig:"HEROKU_BASE_URL"`
 	Debug            bool   `envconfig:"DEBUG"`
 	LogFile          string `envconfig:"LOG_FILE"`
+	Port             string `envconfig:"PORT"`
 }
 
 func NewConfig() (*Config, error) {
