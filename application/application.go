@@ -108,7 +108,7 @@ func (app *app) getBotUpdates() (tgbotapi.UpdatesChannel, error) {
 		return nil, err
 	}
 	updates := app.bot.ListenForWebhook("/" + app.bot.Token)
-	go http.ListenAndServe("0.0.0.0:"+app.conf.Port, nil)
+	go http.ListenAndServe(":"+app.conf.Port, nil)
 
 	app.logger.Info("Listening port " + app.conf.Port + ". Webhook url is " + webhookURL + ".")
 	return updates, nil
