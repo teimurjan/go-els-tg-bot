@@ -99,15 +99,16 @@ func (app *app) getBotUpdates() (tgbotapi.UpdatesChannel, error) {
 		return app.bot.GetUpdatesChan(*updateConfig)
 	}
 
+	webhookURL := app.conf.HerokuBaseUrl + ":" + app.conf.Port + "/" + app.bot.Token
 	_, err := app.bot.SetWebhook(
-		tgbotapi.NewWebhook(app.conf.HerokuBaseUrl + app.bot.Token),
+		tgbotapi.NewWebhook(webhookURL),
 	)
 	if err != nil {
 		app.logger.Fatal("There is a problem in setting webhook.", err)
 		return nil, err
 	}
 	updates := app.bot.ListenForWebhook("/" + app.bot.Token)
-	go http.ListenAndServe(":"+app.conf.Port, nil)
+	go http.ListenAndServe("0.0.0.0:"+app.conf.Port, nil)
 
 	app.logger.Info("Webhook is successfully set.")
 	return updates, nil
