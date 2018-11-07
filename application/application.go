@@ -100,14 +100,14 @@ func (app *app) getBotUpdates() (tgbotapi.UpdatesChannel, error) {
 	}
 
 	_, err := app.bot.SetWebhook(
-		tgbotapi.NewWebhookWithCert(app.conf.HerokuBaseUrl+app.bot.Token, "cert.pem"),
+		tgbotapi.NewWebhook(app.conf.HerokuBaseUrl + app.bot.Token),
 	)
 	if err != nil {
 		app.logger.Fatal("There is a problem in setting webhook.", err)
 		return nil, err
 	}
 	updates := app.bot.ListenForWebhook("/" + app.bot.Token)
-	go http.ListenAndServeTLS("0.0.0.0:8443", "cert.pem", "key.pem", nil)
+	go http.ListenAndServe("0.0.0.0:8443", nil)
 
 	app.logger.Info("Webhook is successfully set.")
 	return updates, nil
