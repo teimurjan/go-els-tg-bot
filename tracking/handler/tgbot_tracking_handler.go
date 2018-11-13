@@ -90,3 +90,19 @@ func (h *tgbotTrackingHandler) DeleteTracking(trackingID int64, chatID int64, me
 	}
 	h.bot.Send(msg)
 }
+
+func (h *tgbotTrackingHandler) CheckUpdates() {
+	updates, err := h.service.GetUpdates()
+	if err == nil {
+		for _, update := range updates {
+			msg := tgbotapi.NewMessage(update.User.ChatID, fmt.Sprintf(
+				texts.TrackingInfoUpdatedTempl,
+				update.Tracking.Name,
+				update.Tracking.Status,
+				update.Tracking.Value,
+			))
+			msg.ParseMode = tgbotapi.ModeMarkdown
+			h.bot.Send(msg)
+		}
+	}
+}

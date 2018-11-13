@@ -68,7 +68,7 @@ func (s *trackingService) GetAll(chatID int64) ([]*models.Tracking, error) {
 	return trackings, nil
 }
 
-func (s *trackingService) CheckUpdates() ([]*tracking.TrackingUpdate, error) {
+func (s *trackingService) GetUpdates() ([]*tracking.TrackingUpdate, error) {
 	users, err := s.userRepo.GetAll()
 	if err != nil {
 		return nil, err

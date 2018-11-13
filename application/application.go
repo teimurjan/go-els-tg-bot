@@ -1,21 +1,19 @@
 package application
 
 import (
-	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/sirupsen/logrus"
 
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/jmoiron/sqlx"
 
+	"github.com/robfig/cron"
 	builder "github.com/teimurjan/go-els-tg-bot/builder/bot"
 	"github.com/teimurjan/go-els-tg-bot/commands"
 	"github.com/teimurjan/go-els-tg-bot/config"
 	"github.com/teimurjan/go-els-tg-bot/containers"
 	"github.com/teimurjan/go-els-tg-bot/storage"
-	"github.com/teimurjan/go-els-tg-bot/texts"
 	trackingFetcher "github.com/teimurjan/go-els-tg-bot/tracking/fetcher"
 	trackingHandler "github.com/teimurjan/go-els-tg-bot/tracking/handler"
 	trackingRepository "github.com/teimurjan/go-els-tg-bot/tracking/repository"
@@ -82,7 +80,11 @@ func (app *app) Start() {
 	if err != nil {
 		app.logger.Fatal("Can't get bot updates.", err)
 	}
-	app.startCheckingUpdates()
+
+	c := cron.New()
+	c.AddFunc("@every 1m", app.handlersContainer.TrackingHandler.CheckUpdates)
+	c.Start()
+
 	for update := range updates {
 		if update.Message != nil && update.Message.IsCommand() {
 			app.handleCommand(&update)
@@ -135,25 +137,4 @@ func (app *app) handleCallback(update *tgbotapi.Update) {
 			int64(update.CallbackQuery.Message.MessageID),
 		)
 	}
-}
-
-func (app *app) startCheckingUpdates() {
-	ticker := time.NewTicker(2 * time.Hour)
-	go func() {
-		for range ticker.C {
-			updates, err := app.servicesContainer.TrackingService.CheckUpdates()
-			if err == nil {
-				for _, update := range updates {
-					msg := tgbotapi.NewMessage(update.User.ChatID, fmt.Sprintf(
-						texts.TrackingInfoUpdatedTempl,
-						update.Tracking.Name,
-						update.Tracking.Status,
-						update.Tracking.Value,
-					))
-					msg.ParseMode = tgbotapi.ModeMarkdown
-					app.bot.Send(msg)
-				}
-			}
-		}
-	}()
 }

@@ -19,6 +19,6 @@ func NewTrackingUpdate(user *models.User, tracking *models.Tracking) *TrackingUp
 type TrackingService interface {
 	Create(tracking string, name string, chatID int64) (*models.Tracking, error)
 	GetAll(chatID int64) ([]*models.Tracking, error)
-	CheckUpdates() ([]*TrackingUpdate, error)
+	GetUpdates() ([]*TrackingUpdate, error)
 	Delete(trackingID int64) error
 }

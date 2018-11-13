@@ -71,7 +71,7 @@ Add [PostgreSQL](https://www.heroku.com/postgres), set Heroku env vars according
 
 Don't forget to set `USE_WEBHOOK=true` for production.
 
-## Plans
+## TODO
 
 - [ ] Add clear logging
 - [ ] Add tests
