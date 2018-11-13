@@ -56,6 +56,7 @@ func NewApp(conf *config.Config, logger *logrus.Logger) *app {
 			reposContainer.TrackingRepo,
 			reposContainer.UserRepo,
 			trackingFetcher.NewTrackingStatusFetcher(),
+			logger,
 		),
 	)
 

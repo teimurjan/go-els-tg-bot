@@ -1,6 +1,10 @@
 package service
 
 import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/sirupsen/logrus"
 	"github.com/teimurjan/go-els-tg-bot/models"
 	"github.com/teimurjan/go-els-tg-bot/tracking"
 	"github.com/teimurjan/go-els-tg-bot/user"
@@ -10,17 +14,20 @@ type trackingService struct {
 	trackingRepo  tracking.TrackingRepository
 	userRepo      user.UserRepository
 	statusFetcher tracking.TrackingStatusFetcher
+	logger        *logrus.Logger
 }
 
 func NewTrackingService(
 	trackingRepo tracking.TrackingRepository,
 	userRepo user.UserRepository,
 	statusFetcher tracking.TrackingStatusFetcher,
+	logger *logrus.Logger,
 ) *trackingService {
 	return &trackingService{
 		trackingRepo,
 		userRepo,
 		statusFetcher,
+		logger,
 	}
 }
 
@@ -47,6 +54,10 @@ func (s *trackingService) Create(value string, name string, chatID int64) (*mode
 	}
 
 	tracking.ID = id
+
+	trackingJSON, _ := json.Marshal(tracking)
+	s.logger.Info("Tracking created: " + string(trackingJSON))
+
 	return &tracking, nil
 }
 
@@ -98,12 +109,19 @@ func (s *trackingService) GetUpdates() ([]*tracking.TrackingUpdate, error) {
 		}
 	}
 
+	if len(trackingUpdates) == 0 {
+		s.logger.Info("No tracking updates found.")
+	}
+
 	return trackingUpdates, nil
 }
 
 func (s *trackingService) updateStatus(t *models.Tracking) bool {
 	newStatus, _ := s.statusFetcher.Fetch(t.Value)
 	if newStatus != t.Status {
+		trackingJSON, _ := json.Marshal(t)
+		s.logger.Info(fmt.Sprintf("%s status changed to %s", trackingJSON, newStatus))
+
 		t.Status = newStatus
 		s.trackingRepo.UpdateOne(t)
 		return true
@@ -112,5 +130,11 @@ func (s *trackingService) updateStatus(t *models.Tracking) bool {
 }
 
 func (s *trackingService) Delete(trackingID int64) error {
-	return s.trackingRepo.Delete(trackingID)
+	err := s.trackingRepo.Delete(trackingID)
+	if err == nil {
+		s.logger.Info(fmt.Sprintf("Tracking(ID=%d) has been deleted.", trackingID))
+	} else {
+		s.logger.Error(fmt.Sprintf("Tracking(ID=%d) couldn't be deleted because of %s.", trackingID, err.Error()))
+	}
+	return err
 }
