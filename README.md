@@ -61,7 +61,7 @@ dep ensure
 Finally, start the bot:
 
 ```
-go run main.go
+go run ./cmd/run_bot/main.go
 ```
 
 ## Deployment
@@ -73,7 +73,7 @@ Don't forget to set `USE_WEBHOOK=true` for production.
 
 ## TODO
 
-- [ ] Add clear logging
+- [ ] Improve logging
 - [ ] Add tests
-- [ ] Add roles
+- [ ] Add Makefile
 - [ ] Add Dockerfile
