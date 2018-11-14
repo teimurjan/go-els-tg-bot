@@ -5,9 +5,9 @@ import (
 
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/teimurjan/go-els-tg-bot/config"
+	checkUpdates "github.com/teimurjan/go-els-tg-bot/job/check_updates"
 	"github.com/teimurjan/go-els-tg-bot/logging"
 	"github.com/teimurjan/go-els-tg-bot/storage"
-	"github.com/teimurjan/go-els-tg-bot/worker"
 )
 
 func main() {
@@ -23,6 +23,6 @@ func main() {
 		logger.Fatal("Can't create a database connection.", err)
 	}
 
-	w := worker.NewTgBotWorker(c, db, logger)
-	w.Do()
+	j := checkUpdates.NewTgBotJob(c, db, logger)
+	j.Do()
 }
