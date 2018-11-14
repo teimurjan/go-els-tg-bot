@@ -1,4 +1,4 @@
-package application
+package app
 
 import (
 	"net/http"
@@ -13,7 +13,6 @@ import (
 	"github.com/teimurjan/go-els-tg-bot/commands"
 	"github.com/teimurjan/go-els-tg-bot/config"
 	"github.com/teimurjan/go-els-tg-bot/containers"
-	"github.com/teimurjan/go-els-tg-bot/storage"
 	trackingFetcher "github.com/teimurjan/go-els-tg-bot/tracking/fetcher"
 	trackingHandler "github.com/teimurjan/go-els-tg-bot/tracking/handler"
 	trackingRepository "github.com/teimurjan/go-els-tg-bot/tracking/repository"
@@ -24,7 +23,7 @@ import (
 	"github.com/teimurjan/go-els-tg-bot/utils/callbacks"
 )
 
-type app struct {
+type tgBotApp struct {
 	conf              *config.Config
 	logger            *logrus.Logger
 	db                *sqlx.DB
@@ -34,12 +33,7 @@ type app struct {
 	handlersContainer *containers.HandlersContainer
 }
 
-func NewApp(conf *config.Config, logger *logrus.Logger) *app {
-	db, err := storage.NewPostgreSQL(conf)
-	if err != nil {
-		logger.Fatal("Can't create a database connection.", err)
-	}
-
+func NewTgBotApp(conf *config.Config, db *sqlx.DB, logger *logrus.Logger) *tgBotApp {
 	bot, err := builder.MakeTelegramBot(conf)
 	if err != nil {
 		logger.Fatal("Can't create a telegram bot.", err)
@@ -65,7 +59,7 @@ func NewApp(conf *config.Config, logger *logrus.Logger) *app {
 		trackingHandler.NewTgbotTrackingHandler(servicesContainer.TrackingService, bot),
 	)
 
-	return &app{
+	return &tgBotApp{
 		conf,
 		logger,
 		db,
@@ -76,63 +70,63 @@ func NewApp(conf *config.Config, logger *logrus.Logger) *app {
 	}
 }
 
-func (app *app) Start() {
-	updates, err := app.getBotUpdates()
+func (tgBotApp *tgBotApp) Start() {
+	updates, err := tgBotApp.getBotUpdates()
 	if err != nil {
-		app.logger.Fatal("Can't get bot updates.", err)
+		tgBotApp.logger.Fatal("Can't get bot updates.", err)
 	}
 
 	c := cron.New()
-	c.AddFunc("@every 1m", app.handlersContainer.TrackingHandler.CheckUpdates)
+	c.AddFunc("@every 1m", tgBotApp.handlersContainer.TrackingHandler.CheckUpdates)
 	c.Start()
 
 	for update := range updates {
 		if update.Message != nil && update.Message.IsCommand() {
-			app.handleCommand(&update)
+			tgBotApp.handleCommand(&update)
 		} else if update.CallbackQuery != nil {
-			app.handleCallback(&update)
+			tgBotApp.handleCallback(&update)
 		}
 	}
 }
 
-func (app *app) getBotUpdates() (tgbotapi.UpdatesChannel, error) {
-	if !app.conf.UseWebhook {
+func (tgBotApp *tgBotApp) getBotUpdates() (tgbotapi.UpdatesChannel, error) {
+	if !tgBotApp.conf.UseWebhook {
 		updateConfig := builder.MakeTelegramBotUpdateConfig()
-		app.logger.Info("Start polling.")
-		return app.bot.GetUpdatesChan(*updateConfig)
+		tgBotApp.logger.Info("Start polling.")
+		return tgBotApp.bot.GetUpdatesChan(*updateConfig)
 	}
 
-	webhookURL := app.conf.HerokuBaseUrl + "/" + app.bot.Token
-	_, err := app.bot.SetWebhook(
+	webhookURL := tgBotApp.conf.HerokuBaseUrl + "/" + tgBotApp.bot.Token
+	_, err := tgBotApp.bot.SetWebhook(
 		tgbotapi.NewWebhook(webhookURL),
 	)
 	if err != nil {
-		app.logger.Fatal("There is a problem in setting webhook.", err)
+		tgBotApp.logger.Fatal("There is a problem in setting webhook.", err)
 		return nil, err
 	}
-	updates := app.bot.ListenForWebhook("/" + app.bot.Token)
-	go http.ListenAndServe(":"+app.conf.Port, nil)
+	updates := tgBotApp.bot.ListenForWebhook("/" + tgBotApp.bot.Token)
+	go http.ListenAndServe(":"+tgBotApp.conf.Port, nil)
 
-	app.logger.Info("Listening port " + app.conf.Port + ". Webhook url is " + webhookURL + ".")
+	tgBotApp.logger.Info("Listening port " + tgBotApp.conf.Port + ". Webhook url is " + webhookURL + ".")
 	return updates, nil
 }
 
-func (app *app) handleCommand(update *tgbotapi.Update) {
+func (tgBotApp *tgBotApp) handleCommand(update *tgbotapi.Update) {
 	command := update.Message.Command()
 	if command == commands.Start {
-		go app.handlersContainer.UserHandler.Join(update.Message.Chat.ID)
+		go tgBotApp.handlersContainer.UserHandler.Join(update.Message.Chat.ID)
 	} else if command == commands.AddTracking {
 		commandArgs := update.Message.CommandArguments()
-		go app.handlersContainer.TrackingHandler.AddTracking(commandArgs, update.Message.Chat.ID)
+		go tgBotApp.handlersContainer.TrackingHandler.AddTracking(commandArgs, update.Message.Chat.ID)
 	} else if command == commands.GetAll {
-		go app.handlersContainer.TrackingHandler.GetAll(update.Message.Chat.ID)
+		go tgBotApp.handlersContainer.TrackingHandler.GetAll(update.Message.Chat.ID)
 	}
 }
 
-func (app *app) handleCallback(update *tgbotapi.Update) {
+func (tgBotApp *tgBotApp) handleCallback(update *tgbotapi.Update) {
 	callbackData := update.CallbackQuery.Data
 	if trackingID, err := callbacks.ParseDeleteTrackingCallback(callbackData); err == nil {
-		go app.handlersContainer.TrackingHandler.DeleteTracking(
+		go tgBotApp.handlersContainer.TrackingHandler.DeleteTracking(
 			trackingID,
 			update.CallbackQuery.Message.Chat.ID,
 			int64(update.CallbackQuery.Message.MessageID),
