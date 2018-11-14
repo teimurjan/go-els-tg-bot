@@ -6,7 +6,6 @@ import (
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/jmoiron/sqlx"
 
-	"github.com/robfig/cron"
 	builder "github.com/teimurjan/go-els-tg-bot/builder/bot"
 	"github.com/teimurjan/go-els-tg-bot/config"
 	"github.com/teimurjan/go-els-tg-bot/containers"
@@ -66,8 +65,6 @@ func NewTgBotWorker(conf *config.Config, db *sqlx.DB, logger *logrus.Logger) *tg
 	}
 }
 
-func (tgBotWorker *tgBotWorker) Start() {
-	c := cron.New()
-	c.AddFunc("@every 1m", tgBotWorker.handlersContainer.TrackingHandler.CheckUpdates)
-	c.Start()
+func (tgBotWorker *tgBotWorker) Do() {
+	tgBotWorker.handlersContainer.TrackingHandler.CheckUpdates()
 }

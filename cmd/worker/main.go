@@ -24,5 +24,5 @@ func main() {
 	}
 
 	w := worker.NewTgBotWorker(c, db, logger)
-	w.Start()
+	w.Do()
 }

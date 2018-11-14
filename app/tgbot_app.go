@@ -8,7 +8,6 @@ import (
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/jmoiron/sqlx"
 
-	"github.com/robfig/cron"
 	builder "github.com/teimurjan/go-els-tg-bot/builder/bot"
 	"github.com/teimurjan/go-els-tg-bot/commands"
 	"github.com/teimurjan/go-els-tg-bot/config"
@@ -75,10 +74,6 @@ func (tgBotApp *tgBotApp) Start() {
 	if err != nil {
 		tgBotApp.logger.Fatal("Can't get bot updates.", err)
 	}
-
-	c := cron.New()
-	c.AddFunc("@every 1m", tgBotApp.handlersContainer.TrackingHandler.CheckUpdates)
-	c.Start()
 
 	for update := range updates {
 		if update.Message != nil && update.Message.IsCommand() {
