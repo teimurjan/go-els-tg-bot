@@ -39,17 +39,14 @@ func (m *postgresqlTrackingRepository) GetForUser(userID int64) ([]*models.Track
 func (m *postgresqlTrackingRepository) Store(t *models.Tracking) (int64, error) {
 	currentTime := time.Now().UTC()
 
-	res, err := m.conn.Exec(`
+	var id int64
+	err := m.conn.QueryRow(`
 		INSERT INTO trackings
 		(name, value, status, user_id, created, modified)
-		VALUES ($1, $2, $3, $4, $5, $5);
-	`, t.Name, t.Value, t.Status, t.UserID, currentTime)
+		VALUES ($1, $2, $3, $4, $5, $5)
+		RETURNING id;
+	`, t.Name, t.Value, t.Status, t.UserID, currentTime).Scan(&id)
 
-	if err != nil {
-		return 0, err
-	}
-
-	id, err := res.RowsAffected()
 	if err != nil {
 		return 0, err
 	}
@@ -57,19 +54,15 @@ func (m *postgresqlTrackingRepository) Store(t *models.Tracking) (int64, error) 
 	return id, err
 }
 
-func (m *postgresqlTrackingRepository) UpdateOne(t *models.Tracking) error {
+func (m *postgresqlTrackingRepository) Update(t *models.Tracking) error {
 	currentTime := time.Now().UTC()
 
 	_, err := m.conn.Exec(`
-		UPDATE trackings SET
-		name=$1, status=$2, modified=$3
-		WHERE value=$2;
-	`, t.Name, t.Status, currentTime, t.Value)
+		UPDATE trackings
+		SET name=$1, user_id=$2, status=$3, modified=$4
+		WHERE value=$5;
+	`, t.Name, t.UserID, t.Status, currentTime, t.Value)
 
-	if err != nil {
-		return err
-	}
-	err = m.conn.Get(t, "SELECT * FROM trackings WHERE id=$1;", t.ID)
 	return err
 }
 

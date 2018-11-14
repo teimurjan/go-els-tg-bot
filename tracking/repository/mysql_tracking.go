@@ -58,19 +58,15 @@ func (m *mysqlTrackingRepository) Store(t *models.Tracking) (int64, error) {
 	return id, err
 }
 
-func (m *mysqlTrackingRepository) UpdateOne(t *models.Tracking) error {
+func (m *mysqlTrackingRepository) Update(t *models.Tracking) error {
 	currentTime := time.Now().UTC()
 
 	_, err := m.conn.Exec(`
 		UPDATE trackings SET
-		name=?, value=?, status=?, user_id=?, modified=?
+		name=?, status=?, user_id=?, modified=?
 		WHERE value=?
-	`, t.Name, t.Value, t.Status, t.UserID, currentTime, t.Value)
+	`, t.Name, t.Status, t.UserID, currentTime, t.Value)
 
-	if err != nil {
-		return err
-	}
-	err = m.conn.Get(t, "SELECT * FROM trackings WHERE id=?", t.ID)
 	return err
 }
 

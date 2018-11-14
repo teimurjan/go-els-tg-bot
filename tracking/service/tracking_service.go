@@ -123,7 +123,7 @@ func (s *trackingService) updateStatus(t *models.Tracking) bool {
 		s.logger.Info(fmt.Sprintf("%s status changed to %s", trackingJSON, newStatus))
 
 		t.Status = newStatus
-		s.trackingRepo.UpdateOne(t)
+		s.trackingRepo.Update(t)
 		return true
 	}
 	return false
