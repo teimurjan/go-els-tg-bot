@@ -68,6 +68,7 @@ go run ./cmd/run_bot/main.go
 
 Bot is ready to be deployed on Heroku.
 Add [PostgreSQL](https://www.heroku.com/postgres), set Heroku env vars according to [.env.example](.env.example) and push.
+<b>IMPORTANT</b>: If you need to receive notifications automatically on Heroku, you have to set up a periodic job [check_updates](cmd/check_updates/main.go). I've made it using [Heroku Scheduler](https://devcenter.heroku.com/articles/scheduler)
 
 Don't forget to set `USE_WEBHOOK=true` for production.
 
