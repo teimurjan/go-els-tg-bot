@@ -28,7 +28,10 @@ func MakeServicesContainer(
 	logger *logrus.Logger,
 ) *containers.ServicesContainer {
 	return containers.NewServicesContainer(
-		userService.NewUserService(repos.UserRepo),
+		userService.NewUserService(
+			repos.UserRepo,
+			logger,
+		),
 		trackingService.NewTrackingService(
 			repos.TrackingRepo,
 			repos.UserRepo,

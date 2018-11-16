@@ -34,6 +34,12 @@ Returns all your orders.
 
 ![](docs/images/get_all.png)
 
+## Notifications
+
+As soon as your added order has another status you will be notified immediately.
+
+![](docs/images/notification.png)
+
 ## Local development
 
 Create .env file looking at [.env.example](.env.example)
@@ -74,7 +80,7 @@ Don't forget to set `USE_WEBHOOK=true` for production.
 
 ## TODO
 
-- [ ] Improve logging
+- [x] Improve logging
 - [ ] Add tests
 - [ ] Add Makefile
 - [ ] Add Dockerfile
