@@ -105,7 +105,7 @@ func (tgBotApp *tgBotApp) handleCommand(update *tgbotapi.Update) {
 
 func (tgBotApp *tgBotApp) handleCallback(update *tgbotapi.Update) {
 	callbackData := update.CallbackQuery.Data
-	if trackingID, err := callbacks.ParseDeleteTrackingCallback(callbackData); err == nil {
+	if trackingID, err := utils.ParseDeleteTrackingCallback(callbackData); err == nil {
 		go tgBotApp.handlersContainer.TrackingHandler.DeleteTracking(
 			trackingID,
 			update.CallbackQuery.Message.Chat.ID,

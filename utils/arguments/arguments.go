@@ -1,4 +1,4 @@
-package argumentsUtils
+package utils
 
 import (
 	"regexp"

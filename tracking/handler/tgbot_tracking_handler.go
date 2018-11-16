@@ -7,7 +7,7 @@ import (
 	"github.com/teimurjan/go-els-tg-bot/errs"
 	"github.com/teimurjan/go-els-tg-bot/texts"
 	"github.com/teimurjan/go-els-tg-bot/tracking"
-	"github.com/teimurjan/go-els-tg-bot/utils/arguments"
+	utils "github.com/teimurjan/go-els-tg-bot/utils/arguments"
 )
 
 type tgbotTrackingHandler struct {
@@ -23,7 +23,7 @@ func NewTgbotTrackingHandler(service tracking.TrackingService, bot *tgbotapi.Bot
 }
 
 func (h *tgbotTrackingHandler) AddTracking(arguments string, chatID int64) {
-	parsedArguments := argumentsUtils.ParseArguments(arguments)
+	parsedArguments := utils.ParseArguments(arguments)
 	tracking, trackingOk := parsedArguments["v"]
 	name, nameOk := parsedArguments["n"]
 	if !trackingOk || !nameOk {
