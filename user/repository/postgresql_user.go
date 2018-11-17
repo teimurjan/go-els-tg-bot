@@ -39,19 +39,15 @@ func (m *postgresqlUserRepository) GetByChatID(chatID int64) (*models.User, erro
 func (m *postgresqlUserRepository) Store(user *models.User) (int64, error) {
 	currentTime := time.Now().UTC()
 
-	res, err := m.conn.Exec(`
+	var id int64
+	err := m.conn.QueryRow(`
 		INSERT INTO users
 		(chat_id, created, modified)
 		VALUES ($1, $2, $2)
 		ON CONFLICT (chat_id) DO UPDATE 
-  		SET modified=$2;
-	`, user.ChatID, currentTime)
+	  	SET modified=$2;
+	`, user.ChatID, currentTime).Scan(&id)
 
-	if err != nil {
-		return 0, err
-	}
-
-	id, err := res.RowsAffected()
 	if err != nil {
 		return 0, err
 	}
