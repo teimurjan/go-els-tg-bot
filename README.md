@@ -34,11 +34,11 @@ Returns all your orders.
 
 ![](docs/images/get_all.png)
 
-## Notifications
+## Updates
 
-As soon as your added order has another status you will be notified immediately.
+As soon as your added order has new status you will be notified immediately.
 
-![](docs/images/notification.png)
+![](docs/images/update.png)
 
 ## Local development
 
