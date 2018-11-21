@@ -45,7 +45,8 @@ func (m *postgresqlUserRepository) Store(user *models.User) (int64, error) {
 		(chat_id, created, modified)
 		VALUES ($1, $2, $2)
 		ON CONFLICT (chat_id) DO UPDATE 
-	  	SET modified=$2;
+		SET modified=$2
+		RETURNING id;
 	`, user.ChatID, currentTime).Scan(&id)
 
 	if err != nil {
