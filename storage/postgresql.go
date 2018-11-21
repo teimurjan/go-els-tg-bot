@@ -6,7 +6,7 @@ import (
 	"github.com/teimurjan/go-els-tg-bot/config"
 )
 
-// NewMySQL creates a new MySQL instance
+// NewPostgreSQL creates a new PostgreSQL instance
 func NewPostgreSQL(c *config.Config) (*sqlx.DB, error) {
 	conn, err := sqlx.Open("postgres", c.DatabaseURL)
 	if err != nil {
