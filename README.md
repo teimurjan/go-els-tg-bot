@@ -1,14 +1,13 @@
-# go-els-tg-bot
-
-[![Go Report Card](https://goreportcard.com/badge/github.com/teimurjan/go-els-tg-bot)](https://goreportcard.com/report/github.com/teimurjan/go-els-tg-bot)
-[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/teimurjan/go-els-tg-bot)
-[![Build Status](https://travis-ci.com/teimurjan/go-els-tg-bot.svg?branch=master)](https://travis-ci.com/teimurjan/go-els-tg-bot)
-
 <center>
 
 |                 ![](docs/images/logo.png)                 |
 | :-------------------------------------------------------: |
 | <sup>Created with [Gopherize](https://gopherize.me)</sup> |
+
+[![Go Report Card](https://goreportcard.com/badge/github.com/teimurjan/go-els-tg-bot)](https://goreportcard.com/report/github.com/teimurjan/go-els-tg-bot)
+[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/teimurjan/go-els-tg-bot)
+[![Build Status](https://travis-ci.com/teimurjan/go-els-tg-bot.svg?branch=master)](https://travis-ci.com/teimurjan/go-els-tg-bot)
+[![codecov](https://codecov.io/gh/teimurjan/go-els-tg-bot/branch/master/graph/badge.svg)](https://codecov.io/gh/teimurjan/go-els-tg-bot)
 
 </center>
 
