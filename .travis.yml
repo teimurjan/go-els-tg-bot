@@ -1,0 +1,23 @@
+language: go
+
+services:
+  - postgresql
+
+go:
+  - 1.11.1
+  - master
+
+sudo: false
+
+before_script:
+  - postgresql -c "create database travis_ci_test;" -U postgres;
+  - go get -u github.com/pressly/goose/cmd/goose
+  - $HOME/gopath/bin/goose -dir migrations postgresql "root@/travis_ci_test" up
+  - go get github.com/mattn/goveralls
+
+script:
+  - $HOME/gopath/bin/goveralls  -service=travis-ci
+
+env:
+  - DB_URL="root@/travis_ci_test?sslmode=false"
+   
