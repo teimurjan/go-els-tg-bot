@@ -99,7 +99,7 @@ func (h *tgbotTrackingHandler) CheckUpdates() {
 	if err == nil {
 		for _, update := range updates {
 			msg := tgbotapi.NewMessage(update.User.ChatID, fmt.Sprintf(
-				texts.TrackingInfoUpdatedTempl,
+				texts.GetTrackingUpdatedMessage(),
 				update.Tracking.Name,
 				update.Tracking.Status,
 				update.Tracking.Value,

@@ -33,6 +33,7 @@ func NewTgBotJob(conf *config.Config, db *sqlx.DB, logger *logrus.Logger) *tgBot
 	}
 }
 
+// Do executes TgBotJob
 func (tgBotJob *tgBotJob) Do() {
 	tgBotJob.handlersContainer.TrackingHandler.CheckUpdates()
 }

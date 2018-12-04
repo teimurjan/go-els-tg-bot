@@ -2,6 +2,7 @@ package models
 
 import "time"
 
+// AddTrackingDialog is a model for monitoring the process of a tracking addition
 type AddTrackingDialog struct {
 	ID                 int64     `db:"id" json:"id"`
 	UserID             int64     `db:"user_id" json:"userId"`

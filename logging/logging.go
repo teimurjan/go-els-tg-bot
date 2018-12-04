@@ -7,6 +7,7 @@ import (
 	"github.com/teimurjan/go-els-tg-bot/config"
 )
 
+// NewLogger creates a new instance of logrus.Logger and set it up
 func NewLogger(c *config.Config) *logrus.Logger {
 	logger := logrus.New()
 	logger.SetFormatter(&logrus.JSONFormatter{})

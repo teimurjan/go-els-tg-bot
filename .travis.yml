@@ -13,11 +13,12 @@ before_script:
   - psql -c "create database travis_ci_test;" -U postgres;
   - go get -u github.com/pressly/goose/cmd/goose
   - $HOME/gopath/bin/goose -dir migrations postgres "postgresql://postgres@localhost/travis_ci_test?sslmode=disable" up
-  - go get github.com/mattn/goveralls
 
 script:
-  - $HOME/gopath/bin/goveralls  -service=travis-ci
+  - go test ./... -v -race -covermode=atomic
 
 env:
   - DB_URL="postgresql://postgres@localhost/travis_ci_test?sslmode=disable"
-   
+
+  after_success:
+  - bash <(curl -s https://codecov.io/bash)

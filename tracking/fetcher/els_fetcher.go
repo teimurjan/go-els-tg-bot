@@ -15,10 +15,12 @@ const statusSelector = "span.br-pill"
 
 type trackingStatusFetcher struct{}
 
+// NewTrackingStatusFetcher creates a new instance of tracking status fetcher
 func NewTrackingStatusFetcher() *trackingStatusFetcher {
 	return &trackingStatusFetcher{}
 }
 
+// Fetch fetches oreder status by tracking
 func (t *trackingStatusFetcher) Fetch(trackingNumber string) (string, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {

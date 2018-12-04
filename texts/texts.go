@@ -6,10 +6,16 @@ import (
 	"time"
 )
 
+// TrackingCommandExample shows the example call of /add_tracking API call
 const TrackingCommandExample = "`/add_tracking -v=\"YOUR_TRACKING_NUMBER\" -n=\"NAME_OF_ORDER\"`"
+
+// NotEnoughArgumentsForTracking asks for the right input for /add_tracking API call
 const NotEnoughArgumentsForTracking string = "Please specify arguments in format:\n" + TrackingCommandExample
+
+// TrackingInfoTempl is a template for tracking info message
 const TrackingInfoTempl string = "Name: *%s*\nStatus: *%s*\nTracking: *%s*"
-const TrackingInfoUpdatedTempl string = "Hey, there is an update of your order!\n\n" + TrackingInfoTempl
+
+// Delete is a text for delete inline button
 const Delete string = "Delete❓"
 
 var welcomeMessages = []string{
@@ -62,34 +68,42 @@ func getRandMessage(messages []string) string {
 	return messages[rand.Intn(len(messages))]
 }
 
+// GetWelcomeMessage gets a welcome message
 func GetWelcomeMessage() string {
 	return getRandMessage(welcomeMessages)
 }
 
+// GetTrackingAddedMessage gets a tracking added message
 func GetTrackingAddedMessage() string {
 	return getRandMessage(trackingAddedMessages)
 }
 
+// GetErrorMessage gets an error message
 func GetErrorMessage() string {
 	return getRandMessage(errorMessages)
 }
 
+// GetTrackingNotExistsMessage gets tracking does not exist message
 func GetTrackingNotExistsMessage(tracking string) string {
 	return fmt.Sprintf(getRandMessage(trackingNotExistsMessages), tracking)
 }
 
+// GetTrackingUpdatedMessage get tracking updated message
 func GetTrackingUpdatedMessage() string {
 	return getRandMessage(trackingUpdatedMessages) + "\n\n" + TrackingInfoTempl
 }
 
+// GetNoTrackingsMessage gets no trackings message
 func GetNoTrackingsMessage() string {
 	return getRandMessage(noTrackingsMessages)
 }
 
+// GetEnterOrderNameMessage gets enter order name message
 func GetEnterOrderNameMessage() string {
 	return getRandMessage(enterOrderNameMessages)
 }
 
+// GetEnterTrackingMessage get enter tracking message
 func GetEnterTrackingMessage() string {
 	return getRandMessage(enterTrackingMessages)
 }

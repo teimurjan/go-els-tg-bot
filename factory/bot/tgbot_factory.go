@@ -5,6 +5,7 @@ import (
 	"github.com/teimurjan/go-els-tg-bot/config"
 )
 
+// MakeTelegramBot creates a new instance of tgbotapi.BotAPI
 func MakeTelegramBot(c *config.Config) (*tgbotapi.BotAPI, error) {
 	bot, err := tgbotapi.NewBotAPI(c.TelegramBotToken)
 	if err != nil {
