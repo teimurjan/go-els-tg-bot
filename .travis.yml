@@ -12,7 +12,7 @@ sudo: false
 before_script:
   - psql -c "create database travis_ci_test;" -U postgres;
   - go get -u github.com/pressly/goose/cmd/goose
-  - $HOME/gopath/bin/goose -dir migrations postgresql "root@/travis_ci_test" up
+  - $HOME/gopath/bin/goose -dir migrations postgres "root@/travis_ci_test" up
   - go get github.com/mattn/goveralls
 
 script:
