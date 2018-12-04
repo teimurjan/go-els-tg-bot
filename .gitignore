@@ -7,3 +7,4 @@ migrate.sh
 build_for_linux.sh
 .DS_Store
 *.log
+coverage.txt
