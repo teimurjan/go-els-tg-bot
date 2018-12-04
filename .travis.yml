@@ -12,12 +12,12 @@ sudo: false
 before_script:
   - psql -c "create database travis_ci_test;" -U postgres;
   - go get -u github.com/pressly/goose/cmd/goose
-  - $HOME/gopath/bin/goose -dir migrations postgres "postgresql://postgres@localhost/travis_ci_test?sslmode=false" up
+  - $HOME/gopath/bin/goose -dir migrations postgres "postgresql://postgres@localhost/travis_ci_test?sslmode=disable" up
   - go get github.com/mattn/goveralls
 
 script:
   - $HOME/gopath/bin/goveralls  -service=travis-ci
 
 env:
-  - DB_URL="postgresql://postgres@localhost/travis_ci_test?sslmode=false"
+  - DB_URL="postgresql://postgres@localhost/travis_ci_test?sslmode=disable"
    
