@@ -20,5 +20,5 @@ script:
 env:
   - DB_URL="postgresql://postgres@localhost/travis_ci_test?sslmode=disable"
 
-  after_success:
-  - bash <(curl -s https://codecov.io/bash)
+after_success:
+- bash <(curl -s https://codecov.io/bash)
