@@ -1,7 +1,6 @@
 package fetcher
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -40,7 +39,7 @@ func (t *trackingStatusFetcher) Fetch(trackingNumber string) (string, error) {
 	if status == "" {
 		return "", errs.NewErr(
 			errs.NoSuchTrackingErrCode,
-			fmt.Sprintf(texts.TrackingNotExistsTempl, trackingNumber),
+			texts.GetTrackingNotExistsMessage(trackingNumber),
 		)
 	}
 	return status, nil

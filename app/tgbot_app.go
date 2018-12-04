@@ -54,9 +54,14 @@ func (tgBotApp *tgBotApp) Start() {
 
 	for update := range updates {
 		if update.Message != nil && update.Message.IsCommand() {
-			tgBotApp.handleCommand(&update)
+			go func() {
+				tgBotApp.resetAllDialogs(&update)
+				tgBotApp.handleCommand(&update)
+			}()
 		} else if update.CallbackQuery != nil {
-			tgBotApp.handleCallback(&update)
+			go tgBotApp.handleCallback(&update)
+		} else if update.Message != nil && len(update.Message.Text) > 0 {
+			go tgBotApp.handleText(&update)
 		}
 	}
 }
@@ -94,22 +99,40 @@ func (tgBotApp *tgBotApp) setupWebhook() (tgbotapi.UpdatesChannel, error) {
 func (tgBotApp *tgBotApp) handleCommand(update *tgbotapi.Update) {
 	command := update.Message.Command()
 	if command == commands.Start {
-		go tgBotApp.handlersContainer.UserHandler.Join(update.Message.Chat.ID)
+		tgBotApp.handlersContainer.UserHandler.Join(update.Message.Chat.ID)
 	} else if command == commands.AddTracking {
 		commandArgs := update.Message.CommandArguments()
-		go tgBotApp.handlersContainer.TrackingHandler.AddTracking(commandArgs, update.Message.Chat.ID)
+		if len(commandArgs) > 0 {
+			tgBotApp.handlersContainer.TrackingHandler.AddTracking(commandArgs, update.Message.Chat.ID)
+		} else {
+			tgBotApp.handlersContainer.AddTrackingDialogHandler.StartDialog(update.Message.Chat.ID)
+		}
 	} else if command == commands.GetAll {
-		go tgBotApp.handlersContainer.TrackingHandler.GetAll(update.Message.Chat.ID)
+		tgBotApp.handlersContainer.TrackingHandler.GetAll(update.Message.Chat.ID)
 	}
 }
 
 func (tgBotApp *tgBotApp) handleCallback(update *tgbotapi.Update) {
 	callbackData := update.CallbackQuery.Data
 	if trackingID, err := utils.ParseDeleteTrackingCallback(callbackData); err == nil {
-		go tgBotApp.handlersContainer.TrackingHandler.DeleteTracking(
+		tgBotApp.handlersContainer.TrackingHandler.DeleteTracking(
 			trackingID,
 			update.CallbackQuery.Message.Chat.ID,
 			int64(update.CallbackQuery.Message.MessageID),
 		)
 	}
+}
+
+func (tgBotApp *tgBotApp) handleText(update *tgbotapi.Update) {
+	text := update.Message.Text
+	tgBotApp.handlersContainer.AddTrackingDialogHandler.UpdateDialogIfActive(
+		text,
+		update.Message.Chat.ID,
+	)
+}
+
+func (tgBotApp *tgBotApp) resetAllDialogs(update *tgbotapi.Update) {
+	tgBotApp.handlersContainer.AddTrackingDialogHandler.ResetDialog(
+		update.Message.Chat.ID,
+	)
 }

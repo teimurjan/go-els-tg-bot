@@ -4,6 +4,9 @@ import (
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
+	addTrackingDialogHandler "github.com/teimurjan/go-els-tg-bot/addTrackingDialog/handler"
+	addTrackingDialogRepository "github.com/teimurjan/go-els-tg-bot/addTrackingDialog/repository"
+	addTrackingDialogService "github.com/teimurjan/go-els-tg-bot/addTrackingDialog/service"
 	"github.com/teimurjan/go-els-tg-bot/containers"
 	trackingFetcher "github.com/teimurjan/go-els-tg-bot/tracking/fetcher"
 	trackingHandler "github.com/teimurjan/go-els-tg-bot/tracking/handler"
@@ -19,6 +22,7 @@ func MakeReposContainer(db *sqlx.DB) *containers.RepositoriesContainer {
 	return containers.NewRepositoriesContainer(
 		userRepository.NewPostgresqlUserRepository(db),
 		trackingRepository.NewPostgresqlTrackingRepository(db),
+		addTrackingDialogRepository.NewPostgresqlAddTrackingDialogRepository(db),
 	)
 }
 
@@ -27,6 +31,7 @@ func MakeServicesContainer(
 	repos *containers.RepositoriesContainer,
 	logger *logrus.Logger,
 ) *containers.ServicesContainer {
+	statusFetcher := trackingFetcher.NewTrackingStatusFetcher()
 	return containers.NewServicesContainer(
 		userService.NewUserService(
 			repos.UserRepo,
@@ -35,7 +40,14 @@ func MakeServicesContainer(
 		trackingService.NewTrackingService(
 			repos.TrackingRepo,
 			repos.UserRepo,
-			trackingFetcher.NewTrackingStatusFetcher(),
+			statusFetcher,
+			logger,
+		),
+		addTrackingDialogService.NewAddTrackingDialogService(
+			repos.AddTrackingDialogRepo,
+			repos.UserRepo,
+			repos.TrackingRepo,
+			statusFetcher,
 			logger,
 		),
 	)
@@ -49,5 +61,6 @@ func MakeHandlersContainer(
 	return containers.NewHandlersContainer(
 		userHandler.NewTgbotUserHandler(services.UserService, bot),
 		trackingHandler.NewTgbotTrackingHandler(services.TrackingService, bot),
+		addTrackingDialogHandler.NewTgbotAddTrackingDialogHandler(services.AddTrackingDialogService, bot),
 	)
 }

@@ -22,9 +22,9 @@ func (h *tgbotUserHandler) Join(chatID int64) {
 	_, err := h.service.Create(chatID)
 	var msg tgbotapi.MessageConfig
 	if err != nil {
-		msg = tgbotapi.NewMessage(chatID, texts.Error)
+		msg = tgbotapi.NewMessage(chatID, texts.GetErrorMessage())
 	} else {
-		msg = tgbotapi.NewMessage(chatID, texts.WelcomeMessage)
+		msg = tgbotapi.NewMessage(chatID, texts.GetWelcomeMessage())
 	}
 	h.bot.Send(msg)
 }

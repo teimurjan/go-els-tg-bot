@@ -15,7 +15,10 @@ type tgbotTrackingHandler struct {
 	bot     *tgbotapi.BotAPI
 }
 
-func NewTgbotTrackingHandler(service tracking.TrackingService, bot *tgbotapi.BotAPI) *tgbotTrackingHandler {
+func NewTgbotTrackingHandler(
+	service tracking.TrackingService,
+	bot *tgbotapi.BotAPI,
+) *tgbotTrackingHandler {
 	return &tgbotTrackingHandler{
 		service,
 		bot,
@@ -38,10 +41,10 @@ func (h *tgbotTrackingHandler) AddTracking(arguments string, chatID int64) {
 		case *errs.Err:
 			msg = err.Error()
 		default:
-			msg = texts.Error
+			msg = texts.GetErrorMessage()
 		}
 	} else {
-		msg = texts.TrackingAdded
+		msg = texts.GetTrackingAddedMessage()
 	}
 	h.bot.Send(tgbotapi.NewMessage(chatID, msg))
 }
@@ -49,12 +52,12 @@ func (h *tgbotTrackingHandler) AddTracking(arguments string, chatID int64) {
 func (h *tgbotTrackingHandler) GetAll(chatID int64) {
 	trackings, err := h.service.GetAll(chatID)
 	if err != nil {
-		h.bot.Send(tgbotapi.NewMessage(chatID, texts.Error))
+		h.bot.Send(tgbotapi.NewMessage(chatID, texts.GetErrorMessage()))
 		return
 	}
 
 	if len(trackings) == 0 {
-		h.bot.Send(tgbotapi.NewMessage(chatID, texts.NoTrackingsAdded))
+		h.bot.Send(tgbotapi.NewMessage(chatID, texts.GetNoTrackingsMessage()))
 		return
 	}
 
@@ -84,7 +87,7 @@ func (h *tgbotTrackingHandler) DeleteTracking(trackingID int64, chatID int64, me
 	err := h.service.Delete(trackingID)
 	var msg tgbotapi.Chattable
 	if err != nil {
-		msg = tgbotapi.NewMessage(chatID, texts.Error)
+		msg = tgbotapi.NewMessage(chatID, texts.GetErrorMessage())
 	} else {
 		msg = tgbotapi.NewDeleteMessage(chatID, int(messageID))
 	}

@@ -18,21 +18,17 @@ The idea is to have a telegram bot that will notify you when your [ELS](https://
 
 Before the creation of this bot you needed to visit the page with the tracking number of your order and then copy-paste the tracking at [ELS site](https://els.kg). Now you need to visit the page once and copy-paste the order's tracking number to the bot. From that moment you don't have to do more actions. You will be notified as soon as the status of your order will be changed.
 
-## Get started
+## How to use
 
 Find @ElsGoBot in telegram. Add and type `/start`.
 
-### `/add_tracking`
+![](docs/images/how_to_use.png)
 
-To add a tracking you need to type `/add_tracking -v="YOUR_TRACKING_NUMBER" -n="ORDER_NAME"`. Don't forget to wrap the values in commas(`"YOUR_TRACKING_NUMBER"`)!
+### Inline `/add_tracking`
+
+To add a tracking you also can type `/add_tracking -v="YOUR_TRACKING_NUMBER" -n="ORDER_NAME"`. Don't forget to wrap the values in commas(`"YOUR_TRACKING_NUMBER"`)!
 
 ![](docs/images/add_tracking.png)
-
-### `/get_all`
-
-Returns all your orders.
-
-![](docs/images/get_all.png)
 
 ## Updates
 
