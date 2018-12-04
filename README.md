@@ -1,5 +1,5 @@
 # go-els-tg-bot
-[![Go Report Card](https://goreportcard.com/badge/github.com/teimurjan/go-els-tg-bot)](https://goreportcard.com/report/github.com/teimurjan/go-els-tg-bot)
+![Go Report Card](https://goreportcard.com/badge/github.com/teimurjan/go-els-tg-bot)
 <center>
 
 |                 ![](docs/images/logo.png)                 |
