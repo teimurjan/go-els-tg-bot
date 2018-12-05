@@ -15,7 +15,7 @@ before_script:
   - $HOME/gopath/bin/goose -dir migrations postgres "postgresql://postgres@localhost/travis_ci_test?sslmode=disable" up
 
 script:
-  - go test ./... -v -race -covermode=atomic -coverprofile=coverage.txt
+  - go test ./... -v -race -covermode=atomic -coverprofile=coverage.txt -coverpkg=./...
 
 env:
   - DB_URL="postgresql://postgres@localhost/travis_ci_test?sslmode=disable"
