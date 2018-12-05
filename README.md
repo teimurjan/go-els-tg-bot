@@ -1,8 +1,8 @@
 <div align="center">
 
-|                 ![](docs/images/logo.png)                 |
-| :-------------------------------------------------------: |
-| <sup>Created with [Gopherize](https://gopherize.me)</sup> |
+![](docs/images/logo.png)
+
+<sup>Created with [Gopherize](https://gopherize.me)</sup>
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/teimurjan/go-els-tg-bot)](https://goreportcard.com/report/github.com/teimurjan/go-els-tg-bot)
 [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/teimurjan/go-els-tg-bot)
