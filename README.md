@@ -1,4 +1,4 @@
-<center>
+<div align="center">
 
 |                 ![](docs/images/logo.png)                 |
 | :-------------------------------------------------------: |
@@ -9,7 +9,7 @@
 [![Build Status](https://travis-ci.com/teimurjan/go-els-tg-bot.svg?branch=master)](https://travis-ci.com/teimurjan/go-els-tg-bot)
 [![codecov](https://codecov.io/gh/teimurjan/go-els-tg-bot/branch/master/graph/badge.svg)](https://codecov.io/gh/teimurjan/go-els-tg-bot)
 
-</center>
+</div>
 
 The project is created in educational purposes during my Go learning path.
 
