@@ -11,10 +11,12 @@ type mysqlUserRepository struct {
 	conn *sqlx.DB
 }
 
+// NewMysqlUserRepository creates a new instance of mysql repository for user
 func NewMysqlUserRepository(conn *sqlx.DB) *mysqlUserRepository {
 	return &mysqlUserRepository{conn}
 }
 
+// GetByID returns a user by id
 func (m *mysqlUserRepository) GetByID(id int64) (*models.User, error) {
 	var user models.User
 	err := m.conn.Get(&user, `
@@ -26,6 +28,7 @@ func (m *mysqlUserRepository) GetByID(id int64) (*models.User, error) {
 	return &user, err
 }
 
+// GetByChatID returns a user by chat_id
 func (m *mysqlUserRepository) GetByChatID(chatID int64) (*models.User, error) {
 	var user models.User
 	err := m.conn.Get(&user, `
@@ -36,6 +39,7 @@ func (m *mysqlUserRepository) GetByChatID(chatID int64) (*models.User, error) {
 	return &user, err
 }
 
+// Store adds a new user
 func (m *mysqlUserRepository) Store(user *models.User) (int64, error) {
 	currentTime := time.Now().UTC()
 
@@ -58,6 +62,7 @@ func (m *mysqlUserRepository) Store(user *models.User) (int64, error) {
 	return id, err
 }
 
+// GetAll returns all existing users
 func (m *mysqlUserRepository) GetAll() ([]*models.User, error) {
 	var users []*models.User
 

@@ -11,10 +11,12 @@ type postgresqlUserRepository struct {
 	conn *sqlx.DB
 }
 
+// NewPostgresqlUserRepository creates a new instance of postgresql repository for user
 func NewPostgresqlUserRepository(conn *sqlx.DB) *postgresqlUserRepository {
 	return &postgresqlUserRepository{conn}
 }
 
+// GetByID returns a user by id
 func (m *postgresqlUserRepository) GetByID(id int64) (*models.User, error) {
 	var user models.User
 	err := m.conn.Get(&user, `
@@ -26,6 +28,7 @@ func (m *postgresqlUserRepository) GetByID(id int64) (*models.User, error) {
 	return &user, err
 }
 
+// GetByChatID returns a user by chat_id
 func (m *postgresqlUserRepository) GetByChatID(chatID int64) (*models.User, error) {
 	var user models.User
 	err := m.conn.Get(&user, `
@@ -36,6 +39,7 @@ func (m *postgresqlUserRepository) GetByChatID(chatID int64) (*models.User, erro
 	return &user, err
 }
 
+// Store adds a new user
 func (m *postgresqlUserRepository) Store(user *models.User) (int64, error) {
 	currentTime := time.Now().UTC()
 
@@ -56,6 +60,7 @@ func (m *postgresqlUserRepository) Store(user *models.User) (int64, error) {
 	return id, err
 }
 
+// GetAll returns all existing users
 func (m *postgresqlUserRepository) GetAll() ([]*models.User, error) {
 	var users []*models.User
 

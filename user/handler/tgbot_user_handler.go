@@ -11,6 +11,7 @@ type tgbotUserHandler struct {
 	bot     *tgbotapi.BotAPI
 }
 
+// NewTgbotUserHandler creates a new instance of user handler for telegram bot
 func NewTgbotUserHandler(service user.UserService, bot *tgbotapi.BotAPI) *tgbotUserHandler {
 	return &tgbotUserHandler{
 		service,
@@ -18,11 +19,12 @@ func NewTgbotUserHandler(service user.UserService, bot *tgbotapi.BotAPI) *tgbotU
 	}
 }
 
+// Join adds a new user
 func (h *tgbotUserHandler) Join(chatID int64) {
 	_, err := h.service.Create(chatID)
 	var msg tgbotapi.MessageConfig
 	if err != nil {
-		msg = tgbotapi.NewMessage(chatID, texts.GetErrorMessage())
+		msg = tgbotapi.NewMessage(chatID, texts.GetErrorMessage(err))
 	} else {
 		msg = tgbotapi.NewMessage(chatID, texts.GetWelcomeMessage())
 	}

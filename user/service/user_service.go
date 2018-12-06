@@ -13,6 +13,7 @@ type userService struct {
 	logger   *logrus.Logger
 }
 
+// NewUserService creates a new instance of user service
 func NewUserService(userRepo user.UserRepository, logger *logrus.Logger) *userService {
 	return &userService{
 		userRepo,
@@ -20,6 +21,7 @@ func NewUserService(userRepo user.UserRepository, logger *logrus.Logger) *userSe
 	}
 }
 
+// Create creates a new user
 func (s *userService) Create(chatID int64) (*models.User, error) {
 	user := models.User{
 		ChatID: chatID,
