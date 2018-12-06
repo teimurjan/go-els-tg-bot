@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/teimurjan/go-els-tg-bot/errs"
 	"github.com/teimurjan/go-els-tg-bot/texts"
 	"github.com/teimurjan/go-els-tg-bot/tracking"
 	utils "github.com/teimurjan/go-els-tg-bot/utils/arguments"
@@ -27,32 +26,30 @@ func NewTgbotTrackingHandler(
 
 func (h *tgbotTrackingHandler) AddTracking(arguments string, chatID int64) {
 	parsedArguments := utils.ParseArguments(arguments)
-	tracking, trackingOk := parsedArguments["v"]
+	trackingNumber, trackingOk := parsedArguments["v"]
 	name, nameOk := parsedArguments["n"]
 	if !trackingOk || !nameOk {
 		h.bot.Send(tgbotapi.NewMessage(chatID, texts.NotEnoughArgumentsForTracking))
 		return
 	}
 
-	_, err := h.service.Create(tracking, name, chatID)
-	var msg string
+	tracking, err := h.service.Create(trackingNumber, name, chatID)
 	if err != nil {
-		switch err.(type) {
-		case *errs.Err:
-			msg = err.Error()
-		default:
-			msg = texts.GetErrorMessage()
-		}
-	} else {
-		msg = texts.GetTrackingAddedMessage()
+		h.bot.Send(tgbotapi.NewMessage(chatID, texts.GetErrorMessage(err)))
+		return
 	}
-	h.bot.Send(tgbotapi.NewMessage(chatID, msg))
+	msgAdded := tgbotapi.NewMessage(chatID, texts.GetTrackingAddedMessage())
+	msgInfo := tgbotapi.NewMessage(chatID, texts.GetTrackingInfoMessage(tracking))
+	msgInfo.ParseMode = tgbotapi.ModeMarkdown
+
+	h.bot.Send(msgAdded)
+	h.bot.Send(msgInfo)
 }
 
 func (h *tgbotTrackingHandler) GetAll(chatID int64) {
 	trackings, err := h.service.GetAll(chatID)
 	if err != nil {
-		h.bot.Send(tgbotapi.NewMessage(chatID, texts.GetErrorMessage()))
+		h.bot.Send(tgbotapi.NewMessage(chatID, texts.GetErrorMessage(err)))
 		return
 	}
 
@@ -87,7 +84,7 @@ func (h *tgbotTrackingHandler) DeleteTracking(trackingID int64, chatID int64, me
 	err := h.service.Delete(trackingID)
 	var msg tgbotapi.Chattable
 	if err != nil {
-		msg = tgbotapi.NewMessage(chatID, texts.GetErrorMessage())
+		msg = tgbotapi.NewMessage(chatID, texts.GetErrorMessage(err))
 	} else {
 		msg = tgbotapi.NewDeleteMessage(chatID, int(messageID))
 	}

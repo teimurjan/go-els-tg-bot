@@ -69,19 +69,25 @@ func (s *addTrackingDialogService) UpdateDialogName(dialog *models.AddTrackingDi
 	return s.addTrackingDialogRepo.Update(dialog)
 }
 
-func (s *addTrackingDialogService) UpdateDialogTracking(dialog *models.AddTrackingDialog, tracking string) error {
-	status, err := s.statusFetcher.Fetch(tracking)
+func (s *addTrackingDialogService) UpdateDialogTracking(dialog *models.AddTrackingDialog, trackingNumber string) (*models.Tracking, error) {
+	status, err := s.statusFetcher.Fetch(trackingNumber)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	s.trackingRepo.Store(&models.Tracking{
+
+	tracking := models.Tracking{
 		UserID: dialog.UserID,
 		Name:   dialog.FutureTrackingName,
-		Value:  tracking,
+		Value:  trackingNumber,
 		Status: status,
-	})
+	}
+	ID, err := s.trackingRepo.Store(&tracking)
+	tracking.ID = ID
+	if err != nil {
+		return nil, err
+	}
 
-	return s.ResetDialog(dialog)
+	return &tracking, s.ResetDialog(dialog)
 }
 
 func (s *addTrackingDialogService) ResetDialog(dialog *models.AddTrackingDialog) error {

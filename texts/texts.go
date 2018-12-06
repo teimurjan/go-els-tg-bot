@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"math/rand"
 	"time"
+
+	"github.com/teimurjan/go-els-tg-bot/errs"
+	"github.com/teimurjan/go-els-tg-bot/models"
 )
 
 // TrackingCommandExample shows the example call of /add_tracking API call
@@ -79,8 +82,13 @@ func GetTrackingAddedMessage() string {
 }
 
 // GetErrorMessage gets an error message
-func GetErrorMessage() string {
-	return getRandMessage(errorMessages)
+func GetErrorMessage(e error) string {
+	switch e.(type) {
+	case *errs.Err:
+		return e.Error()
+	default:
+		return getRandMessage(errorMessages)
+	}
 }
 
 // GetTrackingNotExistsMessage gets tracking does not exist message
@@ -103,7 +111,17 @@ func GetEnterOrderNameMessage() string {
 	return getRandMessage(enterOrderNameMessages)
 }
 
-// GetEnterTrackingMessage get enter tracking message
+// GetEnterTrackingMessage gets enter tracking message
 func GetEnterTrackingMessage() string {
 	return getRandMessage(enterTrackingMessages)
+}
+
+// GetTrackingInfoMessage gets message with tracking info
+func GetTrackingInfoMessage(tracking *models.Tracking) string {
+	return fmt.Sprintf(
+		TrackingInfoTempl,
+		tracking.Name,
+		tracking.Status,
+		tracking.Value,
+	)
 }
