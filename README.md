@@ -29,7 +29,7 @@ Find @ElsGoBot in telegram. Add and type `/start`.
 
 ### Inline `/add_tracking`
 
-To add a tracking you also can type `/add_tracking -v="YOUR_TRACKING_NUMBER" -n="ORDER_NAME"`. Don't forget to wrap the values in commas(`"YOUR_TRACKING_NUMBER"`)!
+To add a tracking you also can type `/add_tracking -v="YOUR_TRACKING_NUMBER" -n="ORDER_NAME"`. Don't forget to wrap the values in quotemarks(`"YOUR_TRACKING_NUMBER"`)!
 
 ![](docs/images/add_tracking.png)
 
