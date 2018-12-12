@@ -4,7 +4,7 @@ import (
 	"regexp"
 )
 
-const argumentsRegex = "-(?P<flag>[a-z])=\"(?P<value>.{1,}?)\""
+const argumentsRegex = "-(?P<flag>[a-z])=[\"“”](?P<value>.{1,}?)[\"“”]"
 
 func ParseArguments(arguments string) map[string]string {
 	compiled := regexp.MustCompile(argumentsRegex)
