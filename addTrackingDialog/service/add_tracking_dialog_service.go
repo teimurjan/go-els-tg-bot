@@ -72,6 +72,7 @@ func (s *addTrackingDialogService) UpdateDialogName(dialog *models.AddTrackingDi
 func (s *addTrackingDialogService) UpdateDialogTracking(dialog *models.AddTrackingDialog, trackingNumber string) (*models.Tracking, error) {
 	status, err := s.statusFetcher.Fetch(trackingNumber)
 	if err != nil {
+		s.logger.Error(err)
 		return nil, err
 	}
 
@@ -84,6 +85,7 @@ func (s *addTrackingDialogService) UpdateDialogTracking(dialog *models.AddTracki
 	ID, err := s.trackingRepo.Store(&tracking)
 	tracking.ID = ID
 	if err != nil {
+		s.logger.Error(err)
 		return nil, err
 	}
 

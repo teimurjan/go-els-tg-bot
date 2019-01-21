@@ -28,6 +28,7 @@ func (s *userService) Create(chatID int64) (*models.User, error) {
 	}
 	id, err := s.userRepo.Store(&user)
 	if err != nil {
+		s.logger.Error(err)
 		return nil, err
 	}
 	user.ID = id

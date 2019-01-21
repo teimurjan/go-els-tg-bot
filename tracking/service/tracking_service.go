@@ -17,12 +17,13 @@ type trackingService struct {
 	logger        *logrus.Logger
 }
 
+// NewTrackingService creates new trackingService instance
 func NewTrackingService(
 	trackingRepo tracking.TrackingRepository,
 	userRepo user.UserRepository,
 	statusFetcher tracking.TrackingStatusFetcher,
 	logger *logrus.Logger,
-) *trackingService {
+) tracking.TrackingService {
 	return &trackingService{
 		trackingRepo,
 		userRepo,
@@ -34,11 +35,13 @@ func NewTrackingService(
 func (s *trackingService) Create(value string, name string, chatID int64) (*models.Tracking, error) {
 	status, err := s.statusFetcher.Fetch(value)
 	if err != nil {
+		s.logger.Error(err)
 		return nil, err
 	}
 
 	user, err := s.userRepo.GetByChatID(chatID)
 	if err != nil {
+		s.logger.Error(err)
 		return nil, err
 	}
 
@@ -50,6 +53,7 @@ func (s *trackingService) Create(value string, name string, chatID int64) (*mode
 	}
 	id, err := s.trackingRepo.Store(&tracking)
 	if err != nil {
+		s.logger.Error(err)
 		return nil, err
 	}
 
@@ -64,11 +68,13 @@ func (s *trackingService) Create(value string, name string, chatID int64) (*mode
 func (s *trackingService) GetAll(chatID int64) ([]*models.Tracking, error) {
 	user, err := s.userRepo.GetByChatID(chatID)
 	if err != nil {
+		s.logger.Error(err)
 		return nil, err
 	}
 
 	trackings, err := s.trackingRepo.GetForUser(user.ID)
 	if err != nil {
+		s.logger.Error(err)
 		return nil, err
 	}
 
@@ -82,6 +88,7 @@ func (s *trackingService) GetAll(chatID int64) ([]*models.Tracking, error) {
 func (s *trackingService) GetUpdates() ([]*tracking.TrackingUpdate, error) {
 	users, err := s.userRepo.GetAll()
 	if err != nil {
+		s.logger.Error(err)
 		return nil, err
 	}
 
@@ -90,12 +97,19 @@ func (s *trackingService) GetUpdates() ([]*tracking.TrackingUpdate, error) {
 	for _, user := range users {
 		trackings, err := s.trackingRepo.GetForUser(user.ID)
 		if err != nil {
+			s.logger.Error(err)
 			return nil, err
 		}
 
 		var updatedTrackings []*models.Tracking
 		for i := 0; i < len(trackings); i++ {
-			updated := s.updateStatus(trackings[i])
+			updated, err := s.updateStatus(trackings[i])
+
+			if err != nil {
+				s.logger.Error(err)
+				return nil, err
+			}
+
 			if updated {
 				updatedTrackings = append(updatedTrackings, trackings[i])
 			}
@@ -116,17 +130,21 @@ func (s *trackingService) GetUpdates() ([]*tracking.TrackingUpdate, error) {
 	return trackingUpdates, nil
 }
 
-func (s *trackingService) updateStatus(t *models.Tracking) bool {
-	newStatus, _ := s.statusFetcher.Fetch(t.Value)
+func (s *trackingService) updateStatus(t *models.Tracking) (bool, error) {
+	newStatus, err := s.statusFetcher.Fetch(t.Value)
+	if err != nil {
+		return false, err
+	}
+
 	if newStatus != t.Status {
 		trackingJSON, _ := json.Marshal(t)
 		s.logger.Info(fmt.Sprintf("%s status changed to %s", trackingJSON, newStatus))
 
 		t.Status = newStatus
 		s.trackingRepo.Update(t)
-		return true
+		return true, nil
 	}
-	return false
+	return false, nil
 }
 
 func (s *trackingService) Delete(trackingID int64) error {
