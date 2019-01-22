@@ -5,6 +5,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/teimurjan/go-els-tg-bot/models"
+	"github.com/teimurjan/go-els-tg-bot/user"
 )
 
 type postgresqlUserRepository struct {
@@ -12,7 +13,7 @@ type postgresqlUserRepository struct {
 }
 
 // NewPostgresqlUserRepository creates a new instance of postgresql repository for user
-func NewPostgresqlUserRepository(conn *sqlx.DB) *postgresqlUserRepository {
+func NewPostgresqlUserRepository(conn *sqlx.DB) user.UserRepository {
 	return &postgresqlUserRepository{conn}
 }
 

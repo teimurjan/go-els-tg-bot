@@ -3,16 +3,17 @@ package handler
 import (
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/teimurjan/go-els-tg-bot/texts"
+	"github.com/teimurjan/go-els-tg-bot/tgbot"
 	"github.com/teimurjan/go-els-tg-bot/user"
 )
 
 type tgbotUserHandler struct {
 	service user.UserService
-	bot     *tgbotapi.BotAPI
+	bot     tgbot.TgBot
 }
 
 // NewTgbotUserHandler creates a new instance of user handler for telegram bot
-func NewTgbotUserHandler(service user.UserService, bot *tgbotapi.BotAPI) *tgbotUserHandler {
+func NewTgbotUserHandler(service user.UserService, bot tgbot.TgBot) user.UserHandler {
 	return &tgbotUserHandler{
 		service,
 		bot,

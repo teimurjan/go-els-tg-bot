@@ -5,13 +5,15 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/teimurjan/go-els-tg-bot/models"
+	"github.com/teimurjan/go-els-tg-bot/tracking"
 )
 
 type postgresqlTrackingRepository struct {
 	conn *sqlx.DB
 }
 
-func NewPostgresqlTrackingRepository(conn *sqlx.DB) *postgresqlTrackingRepository {
+// NewPostgresqlTrackingRepository creates new postgresqlTrackingRepository instance
+func NewPostgresqlTrackingRepository(conn *sqlx.DB) tracking.TrackingRepository {
 	return &postgresqlTrackingRepository{conn}
 }
 

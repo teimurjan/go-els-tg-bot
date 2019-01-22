@@ -4,17 +4,19 @@ import (
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/teimurjan/go-els-tg-bot/addTrackingDialog"
 	"github.com/teimurjan/go-els-tg-bot/texts"
+	"github.com/teimurjan/go-els-tg-bot/tgbot"
 )
 
 type addTrackingDialogHandler struct {
 	service addTrackingDialog.AddTrackingDialogService
-	bot     *tgbotapi.BotAPI
+	bot     tgbot.TgBot
 }
 
+// NewTgbotAddTrackingDialogHandler creates new addTrackingDialogHandler instance
 func NewTgbotAddTrackingDialogHandler(
 	service addTrackingDialog.AddTrackingDialogService,
-	bot *tgbotapi.BotAPI,
-) *addTrackingDialogHandler {
+	bot tgbot.TgBot,
+) addTrackingDialog.AddTrackingDialogHandler {
 	return &addTrackingDialogHandler{
 		service,
 		bot,

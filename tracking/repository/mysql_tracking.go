@@ -3,6 +3,8 @@ package repository
 import (
 	"time"
 
+	"github.com/teimurjan/go-els-tg-bot/tracking"
+
 	"github.com/jmoiron/sqlx"
 	"github.com/teimurjan/go-els-tg-bot/models"
 )
@@ -11,7 +13,8 @@ type mysqlTrackingRepository struct {
 	conn *sqlx.DB
 }
 
-func NewMysqlTrackingRepository(conn *sqlx.DB) *mysqlTrackingRepository {
+// NewMysqlTrackingRepository creates new mysqlTrackingRepository instance
+func NewMysqlTrackingRepository(conn *sqlx.DB) tracking.TrackingRepository {
 	return &mysqlTrackingRepository{conn}
 }
 

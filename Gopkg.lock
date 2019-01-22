@@ -42,6 +42,14 @@
   version = "v4.6.4"
 
 [[projects]]
+  digest = "1:b60efdeb75d3c0ceed88783ac2495256aba3491a537d0f31401202579fd62a94"
+  name = "github.com/golang/mock"
+  packages = ["gomock"]
+  pruneopts = "UT"
+  revision = "51421b967af1f557f93a59e0057aaf15ca02e29c"
+  version = "v1.2.0"
+
+[[projects]]
   digest = "1:6c41d4f998a03b6604227ccad36edaed6126c397e5d78709ef4814a1145a6757"
   name = "github.com/jmoiron/sqlx"
   packages = [
@@ -167,6 +175,7 @@
     "github.com/PuerkitoBio/goquery",
     "github.com/go-sql-driver/mysql",
     "github.com/go-telegram-bot-api/telegram-bot-api",
+    "github.com/golang/mock/gomock",
     "github.com/jmoiron/sqlx",
     "github.com/joho/godotenv/autoload",
     "github.com/kelseyhightower/envconfig",

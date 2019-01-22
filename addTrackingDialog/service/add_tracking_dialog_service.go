@@ -18,13 +18,14 @@ type addTrackingDialogService struct {
 	logger                *logrus.Logger
 }
 
+// NewAddTrackingDialogService creates new addTrackingDialogService instance
 func NewAddTrackingDialogService(
 	addTrackingDialogRepo addTrackingDialog.AddTrackingDialogRepository,
 	userRepo user.UserRepository,
 	trackingRepo tracking.TrackingRepository,
 	statusFetcher tracking.TrackingStatusFetcher,
 	logger *logrus.Logger,
-) *addTrackingDialogService {
+) addTrackingDialog.AddTrackingDialogService {
 	return &addTrackingDialogService{
 		addTrackingDialogRepo,
 		userRepo,

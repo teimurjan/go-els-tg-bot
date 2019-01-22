@@ -5,6 +5,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/teimurjan/go-els-tg-bot/models"
+	"github.com/teimurjan/go-els-tg-bot/user"
 )
 
 type mysqlUserRepository struct {
@@ -12,7 +13,7 @@ type mysqlUserRepository struct {
 }
 
 // NewMysqlUserRepository creates a new instance of mysql repository for user
-func NewMysqlUserRepository(conn *sqlx.DB) *mysqlUserRepository {
+func NewMysqlUserRepository(conn *sqlx.DB) user.UserRepository {
 	return &mysqlUserRepository{conn}
 }
 

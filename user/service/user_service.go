@@ -14,7 +14,7 @@ type userService struct {
 }
 
 // NewUserService creates a new instance of user service
-func NewUserService(userRepo user.UserRepository, logger *logrus.Logger) *userService {
+func NewUserService(userRepo user.UserRepository, logger *logrus.Logger) user.UserService {
 	return &userService{
 		userRepo,
 		logger,

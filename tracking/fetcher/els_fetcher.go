@@ -10,6 +10,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/teimurjan/go-els-tg-bot/errs"
 	"github.com/teimurjan/go-els-tg-bot/texts"
+	"github.com/teimurjan/go-els-tg-bot/tracking"
 	utils "github.com/teimurjan/go-els-tg-bot/utils/regexp"
 )
 
@@ -19,13 +20,8 @@ const CSRFTokenSelector = "meta[name=\"csrf-token\"]"
 
 type trackingStatusFetcher struct{}
 
-// TrackingStatusFetcher is the status fetcher interface
-type TrackingStatusFetcher interface {
-	Fetch(trackingNumber string) (string, error)
-}
-
 // NewTrackingStatusFetcher creates a new instance of tracking status fetcher
-func NewTrackingStatusFetcher() TrackingStatusFetcher {
+func NewTrackingStatusFetcher() tracking.TrackingStatusFetcher {
 	return &trackingStatusFetcher{}
 }
 

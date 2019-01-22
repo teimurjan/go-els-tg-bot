@@ -3,6 +3,8 @@ package handler
 import (
 	"fmt"
 
+	"github.com/teimurjan/go-els-tg-bot/tgbot"
+
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/teimurjan/go-els-tg-bot/texts"
 	"github.com/teimurjan/go-els-tg-bot/tracking"
@@ -11,13 +13,14 @@ import (
 
 type tgbotTrackingHandler struct {
 	service tracking.TrackingService
-	bot     *tgbotapi.BotAPI
+	bot     tgbot.TgBot
 }
 
+// NewTgbotTrackingHandler creates new tgbotTrackingHandler instance
 func NewTgbotTrackingHandler(
 	service tracking.TrackingService,
-	bot *tgbotapi.BotAPI,
-) *tgbotTrackingHandler {
+	bot tgbot.TgBot,
+) tracking.TrackingHandler {
 	return &tgbotTrackingHandler{
 		service,
 		bot,

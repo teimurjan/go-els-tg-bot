@@ -2,17 +2,23 @@ package fetcher
 
 import "net/http"
 
+// RequestBuilder is a request builder interface
+type RequestBuilder interface {
+	Build() (*http.Request, error)
+}
+
 type requestBuilder struct {
 	URL       string
 	CSRFToken string
 	cookie    string
 }
 
+// NewRequestBuilder creates requestBuilder instance
 func NewRequestBuilder(
 	URL string,
 	CSRFToken string,
 	cookie string,
-) *requestBuilder {
+) RequestBuilder {
 	return &requestBuilder{
 		URL,
 		CSRFToken,

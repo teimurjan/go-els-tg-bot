@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/teimurjan/go-els-tg-bot/addTrackingDialog"
 	"github.com/teimurjan/go-els-tg-bot/models"
 )
 
@@ -11,7 +12,8 @@ type postgresqlAddTrackingDialogRepository struct {
 	conn *sqlx.DB
 }
 
-func NewPostgresqlAddTrackingDialogRepository(conn *sqlx.DB) *postgresqlAddTrackingDialogRepository {
+// NewPostgresqlAddTrackingDialogRepository creates new postgresqlAddTrackingDialogRepository instance
+func NewPostgresqlAddTrackingDialogRepository(conn *sqlx.DB) addTrackingDialog.AddTrackingDialogRepository {
 	return &postgresqlAddTrackingDialogRepository{conn}
 }
 

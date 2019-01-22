@@ -3,6 +3,8 @@ package repository
 import (
 	"time"
 
+	"github.com/teimurjan/go-els-tg-bot/addTrackingDialog"
+
 	"github.com/jmoiron/sqlx"
 	"github.com/teimurjan/go-els-tg-bot/models"
 )
@@ -11,7 +13,8 @@ type mysqlAddTrackingDialogRepository struct {
 	conn *sqlx.DB
 }
 
-func NewMysqlAddTrackingDialogRepository(conn *sqlx.DB) *mysqlAddTrackingDialogRepository {
+// NewMysqlAddTrackingDialogRepository creates new mysqlAddTrackingDialogRepository instance
+func NewMysqlAddTrackingDialogRepository(conn *sqlx.DB) addTrackingDialog.AddTrackingDialogRepository {
 	return &mysqlAddTrackingDialogRepository{conn}
 }
 
