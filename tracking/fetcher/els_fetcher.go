@@ -15,7 +15,7 @@ import (
 )
 
 const elsURL = "https://els.kg/en/find_tracking"
-const statusSelector = "div>div>span:nth-child(3)"
+const statusSelector = "div>div>span:last-child"
 const CSRFTokenSelector = "meta[name=\"csrf-token\"]"
 
 type trackingStatusFetcher struct{}
