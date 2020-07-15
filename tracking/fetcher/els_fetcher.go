@@ -15,7 +15,8 @@ import (
 )
 
 const elsURL = "https://els.kg/en/find_tracking"
-const statusSelector = "div>div>span:last-child"
+const weightSelector = "div>div>span:first-of-type"
+const statusSelector = "div>div>span:last-of-type"
 const CSRFTokenSelector = "meta[name=\"csrf-token\"]"
 
 type trackingStatusFetcher struct{}
@@ -25,47 +26,56 @@ func NewTrackingStatusFetcher() tracking.TrackingStatusFetcher {
 	return &trackingStatusFetcher{}
 }
 
+func strip(str string) string {
+	return strings.Join(strings.Fields(str), " ")
+}
+
 // Fetch fetches oreder status by tracking
-func (t *trackingStatusFetcher) Fetch(trackingNumber string) (string, error) {
+func (t *trackingStatusFetcher) Fetch(trackingNumber string) (*tracking.TrackingStatus, error) {
 	pageResponse, err := http.Get(elsURL)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	cookie, err := getCookie(pageResponse)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	CSRFToken, err := getCSRFToken(pageResponse)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	request, err := NewRequestBuilder(elsURL+getQuery(trackingNumber), CSRFToken, cookie).Build()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	body, err := sendRequest(request)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	doc, err := getHTMLFromResponse(string(body))
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	status := doc.Find(statusSelector).Text()
 	if status == "" {
-		return "", errs.NewErr(
+		return nil, errs.NewErr(
 			errs.NoSuchTrackingErrCode,
 			texts.GetTrackingNotExistsMessage(trackingNumber),
 		)
 	}
 
-	return strings.Join(strings.Fields(status), " "), nil
+	weight := doc.Find(weightSelector).Text()
+	if weight == "" {
+		weight = "Unknown"
+	}
+
+	return &tracking.TrackingStatus{Status: strip(status), Weight: strip(weight)}, nil
 }
 
 func sendRequest(request *http.Request) (string, error) {

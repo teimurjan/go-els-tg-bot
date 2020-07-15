@@ -1,5 +1,10 @@
 package tracking
 
+type TrackingStatus struct {
+	Status string
+	Weight string
+}
+
 type TrackingStatusFetcher interface {
-	Fetch(trackingNumber string) (string, error)
+	Fetch(trackingNumber string) (*TrackingStatus, error)
 }

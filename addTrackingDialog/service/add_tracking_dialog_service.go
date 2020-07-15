@@ -81,7 +81,8 @@ func (s *addTrackingDialogService) UpdateDialogTracking(dialog *models.AddTracki
 		UserID: dialog.UserID,
 		Name:   dialog.FutureTrackingName,
 		Value:  trackingNumber,
-		Status: status,
+		Status: status.Status,
+		Weight: status.Weight,
 	}
 	ID, err := s.trackingRepo.Store(&tracking)
 	tracking.ID = ID

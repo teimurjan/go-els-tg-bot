@@ -16,7 +16,7 @@ const TrackingCommandExample = "`/add_tracking -v=\"YOUR_TRACKING_NUMBER\" -n=\"
 const NotEnoughArgumentsForTracking string = "Please specify arguments in format:\n" + TrackingCommandExample
 
 // TrackingInfoTempl is a template for tracking info message
-const TrackingInfoTempl string = "Name: *%s*\nStatus: *%s*\nTracking: *%s*"
+const TrackingInfoTempl string = "Name: *%s*\nStatus: *%s*\nWeight: *%s*\nTracking: *%s*"
 
 // Delete is a text for delete inline button
 const Delete string = "Delete❓"
@@ -122,6 +122,7 @@ func GetTrackingInfoMessage(tracking *models.Tracking) string {
 		TrackingInfoTempl,
 		tracking.Name,
 		tracking.Status,
+		tracking.Weight,
 		tracking.Value,
 	)
 }

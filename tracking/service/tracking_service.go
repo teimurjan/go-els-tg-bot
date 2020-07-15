@@ -48,7 +48,8 @@ func (s *trackingService) Create(value string, name string, chatID int64) (*mode
 	tracking := models.Tracking{
 		UserID: user.ID,
 		Value:  value,
-		Status: status,
+		Status: status.Status,
+		Weight: status.Weight,
 		Name:   name,
 	}
 	id, err := s.trackingRepo.Store(&tracking)
@@ -136,11 +137,13 @@ func (s *trackingService) updateStatus(t *models.Tracking) (bool, error) {
 		return false, err
 	}
 
-	if newStatus != t.Status {
+	if newStatus.Status != t.Status {
 		trackingJSON, _ := json.Marshal(t)
 		s.logger.Info(fmt.Sprintf("%s status changed to %s", trackingJSON, newStatus))
 
-		t.Status = newStatus
+		t.Status = newStatus.Status
+		t.Weight = newStatus.Weight
+
 		s.trackingRepo.Update(t)
 		return true, nil
 	}
