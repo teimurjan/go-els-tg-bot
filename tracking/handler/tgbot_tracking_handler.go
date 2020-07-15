@@ -5,7 +5,7 @@ import (
 
 	"github.com/teimurjan/go-els-tg-bot/tgbot"
 
-	"github.com/go-telegram-bot-api/telegram-bot-api"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/teimurjan/go-els-tg-bot/texts"
 	"github.com/teimurjan/go-els-tg-bot/tracking"
 	utils "github.com/teimurjan/go-els-tg-bot/utils/arguments"
@@ -75,6 +75,7 @@ func (h *tgbotTrackingHandler) GetAll(chatID int64) {
 			texts.TrackingInfoTempl,
 			tracking.Name,
 			tracking.Status,
+			tracking.Weight,
 			tracking.Value,
 		))
 		msg.ParseMode = tgbotapi.ModeMarkdown

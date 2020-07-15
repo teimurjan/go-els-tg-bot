@@ -9,7 +9,7 @@ import (
 
 func TestNewMySQL(t *testing.T) {
 	c := config.Config{
-		DatabaseURL:      "url/to/db",
+		DatabaseURL:      "jdbc:mysql://localhost:3306/test",
 		TelegramBotToken: "bot_token",
 		UseWebhook:       false,
 		HerokuBaseUrl:    "heroku_base_url",
