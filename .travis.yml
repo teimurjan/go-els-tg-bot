@@ -9,16 +9,8 @@ go:
 
 sudo: false
 
-before_script:
-  - psql -c "create database travis_ci_test;" -U postgres;
-  - go get -u github.com/pressly/goose/cmd/goose
-  - $HOME/gopath/bin/goose -dir migrations postgres "postgresql://postgres@localhost/travis_ci_test?sslmode=disable" up
-
 script:
   - go test ./... -v -race -covermode=atomic -coverprofile=coverage.txt -coverpkg=./...
-
-env:
-  - DB_URL="postgresql://postgres@localhost/travis_ci_test?sslmode=disable"
 
 after_success:
 - bash <(curl -s https://codecov.io/bash)

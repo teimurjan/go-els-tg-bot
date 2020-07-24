@@ -9,7 +9,7 @@ import (
 
 func TestNewPostgreSQL(t *testing.T) {
 	c := config.Config{
-		DatabaseURL:      "",
+		DatabaseURL:      "DB_URL",
 		TelegramBotToken: "bot_token",
 		UseWebhook:       false,
 		HerokuBaseUrl:    "heroku_base_url",
