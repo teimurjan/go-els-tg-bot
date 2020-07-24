@@ -97,8 +97,8 @@ func GetTrackingNotExistsMessage(tracking string) string {
 }
 
 // GetTrackingUpdatedMessage get tracking updated message
-func GetTrackingUpdatedMessage() string {
-	return getRandMessage(trackingUpdatedMessages) + "\n\n" + TrackingInfoTempl
+func GetTrackingUpdatedMessage(tracking *models.Tracking) string {
+	return getRandMessage(trackingUpdatedMessages) + "\n\n" + GetTrackingInfoMessage(tracking)
 }
 
 // GetNoTrackingsMessage gets no trackings message

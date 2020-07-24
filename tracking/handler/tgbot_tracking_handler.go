@@ -71,13 +71,7 @@ func (h *tgbotTrackingHandler) GetAll(chatID int64) {
 			},
 		)
 
-		msg := tgbotapi.NewMessage(chatID, fmt.Sprintf(
-			texts.TrackingInfoTempl,
-			tracking.Name,
-			tracking.Status,
-			tracking.Weight,
-			tracking.Value,
-		))
+		msg := tgbotapi.NewMessage(chatID, texts.GetTrackingInfoMessage(tracking))
 		msg.ParseMode = tgbotapi.ModeMarkdown
 		msg.ReplyMarkup = inlineBtns
 		h.bot.Send(msg)
@@ -99,12 +93,10 @@ func (h *tgbotTrackingHandler) CheckUpdates() {
 	updates, err := h.service.GetUpdates()
 	if err == nil {
 		for _, update := range updates {
-			msg := tgbotapi.NewMessage(update.User.ChatID, fmt.Sprintf(
-				texts.GetTrackingUpdatedMessage(),
-				update.Tracking.Name,
-				update.Tracking.Status,
-				update.Tracking.Value,
-			))
+			msg := tgbotapi.NewMessage(
+				update.User.ChatID,
+				texts.GetTrackingUpdatedMessage(update.Tracking),
+			)
 			msg.ParseMode = tgbotapi.ModeMarkdown
 			h.bot.Send(msg)
 		}
