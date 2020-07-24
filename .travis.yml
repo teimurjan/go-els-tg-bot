@@ -4,7 +4,7 @@ services:
   - postgresql
 
 go:
-  - 1.11.1
+  - 1.13.6
   - master
 
 sudo: false
