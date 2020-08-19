@@ -45,7 +45,7 @@ func (m *postgresqlTrackingRepository) Store(t *models.Tracking) (int64, error) 
 	err := m.conn.QueryRow(`
 		INSERT INTO trackings
 		(name, value, status, user_id, weight, created, modified)
-		VALUES ($1, $2, $3, $4, $5, $5)
+		VALUES ($1, $2, $3, $4, $5, $6, $6)
 		RETURNING id;
 	`, t.Name, t.Value, t.Status, t.UserID, t.Weight, currentTime).Scan(&id)
 
