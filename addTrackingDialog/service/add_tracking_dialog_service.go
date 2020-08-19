@@ -14,7 +14,7 @@ type addTrackingDialogService struct {
 	addTrackingDialogRepo addTrackingDialog.AddTrackingDialogRepository
 	userRepo              user.UserRepository
 	trackingRepo          tracking.TrackingRepository
-	statusFetcher         tracking.TrackingStatusFetcher
+	statusFetcher         tracking.TrackingDataFetcher
 	logger                *logrus.Logger
 }
 
@@ -23,7 +23,7 @@ func NewAddTrackingDialogService(
 	addTrackingDialogRepo addTrackingDialog.AddTrackingDialogRepository,
 	userRepo user.UserRepository,
 	trackingRepo tracking.TrackingRepository,
-	statusFetcher tracking.TrackingStatusFetcher,
+	statusFetcher tracking.TrackingDataFetcher,
 	logger *logrus.Logger,
 ) addTrackingDialog.AddTrackingDialogService {
 	return &addTrackingDialogService{

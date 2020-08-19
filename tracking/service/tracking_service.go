@@ -13,7 +13,7 @@ import (
 type trackingService struct {
 	trackingRepo  tracking.TrackingRepository
 	userRepo      user.UserRepository
-	statusFetcher tracking.TrackingStatusFetcher
+	statusFetcher tracking.TrackingDataFetcher
 	logger        *logrus.Logger
 }
 
@@ -21,7 +21,7 @@ type trackingService struct {
 func NewTrackingService(
 	trackingRepo tracking.TrackingRepository,
 	userRepo user.UserRepository,
-	statusFetcher tracking.TrackingStatusFetcher,
+	statusFetcher tracking.TrackingDataFetcher,
 	logger *logrus.Logger,
 ) tracking.TrackingService {
 	return &trackingService{
@@ -80,7 +80,7 @@ func (s *trackingService) GetAll(chatID int64) ([]*models.Tracking, error) {
 	}
 
 	for i := 0; i < len(trackings); i++ {
-		s.updateStatus(trackings[i])
+		s.fetchAndUpdateTrackingData(trackings[i])
 	}
 
 	return trackings, nil
@@ -104,14 +104,14 @@ func (s *trackingService) GetUpdates() ([]*tracking.TrackingUpdate, error) {
 
 		var updatedTrackings []*models.Tracking
 		for i := 0; i < len(trackings); i++ {
-			updated, err := s.updateStatus(trackings[i])
+			statusUpdated, _, err := s.fetchAndUpdateTrackingData(trackings[i])
 
 			if err != nil {
 				s.logger.Error(err)
 				return nil, err
 			}
 
-			if updated {
+			if statusUpdated {
 				updatedTrackings = append(updatedTrackings, trackings[i])
 			}
 		}
@@ -131,24 +131,32 @@ func (s *trackingService) GetUpdates() ([]*tracking.TrackingUpdate, error) {
 	return trackingUpdates, nil
 }
 
-func (s *trackingService) updateStatus(t *models.Tracking) (bool, error) {
-	newStatus, err := s.statusFetcher.Fetch(t.Value)
+func (s *trackingService) fetchAndUpdateTrackingData(t *models.Tracking) (bool, bool, error) {
+	data, err := s.statusFetcher.Fetch(t.Value)
 	if err != nil {
-		return false, err
+		return false, false, err
 	}
 
-	if newStatus.Status != t.Status {
-		trackingJSON, _ := json.Marshal(t)
-		s.logger.Info(fmt.Sprintf("%s status changed to %s", trackingJSON, newStatus))
+	isStatusChanged := data.Status != t.Status
+	isWeightChanged := data.Weight != t.Weight
 
-		t.Status = newStatus.Status
-		t.Weight = newStatus.Weight
+	logMsg := "Tracking data has changed."
 
+	if isWeightChanged {
+		logMsg += fmt.Sprintf("Weight: %s -> %s", t.Weight, data.Weight)
+		t.Weight = data.Weight
+	}
+	if isStatusChanged {
+		logMsg += fmt.Sprintf("Status: %s -> %s", t.Status, data.Status)
+		t.Status = data.Status
+	}
+
+	if isStatusChanged || isWeightChanged {
+		s.logger.Info(logMsg)
 		s.trackingRepo.Update(t)
-		return true, nil
 	}
 
-	return false, nil
+	return isStatusChanged, isWeightChanged, nil
 }
 
 func (s *trackingService) Delete(trackingID int64) error {

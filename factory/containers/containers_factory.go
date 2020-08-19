@@ -1,7 +1,7 @@
 package factory
 
 import (
-	"github.com/go-telegram-bot-api/telegram-bot-api"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
 	addTrackingDialogHandler "github.com/teimurjan/go-els-tg-bot/addTrackingDialog/handler"
@@ -31,7 +31,7 @@ func MakeServicesContainer(
 	repos *containers.RepositoriesContainer,
 	logger *logrus.Logger,
 ) *containers.ServicesContainer {
-	statusFetcher := trackingFetcher.NewTrackingStatusFetcher()
+	statusFetcher := trackingFetcher.NewTrackingDataFetcher()
 	return containers.NewServicesContainer(
 		userService.NewUserService(
 			repos.UserRepo,

@@ -19,11 +19,11 @@ const weightSelector = "div>div>span:first-of-type"
 const statusSelector = "div>div>span:last-of-type"
 const CSRFTokenSelector = "meta[name=\"csrf-token\"]"
 
-type trackingStatusFetcher struct{}
+type trackingDataFetcher struct{}
 
-// NewTrackingStatusFetcher creates a new instance of tracking status fetcher
-func NewTrackingStatusFetcher() tracking.TrackingStatusFetcher {
-	return &trackingStatusFetcher{}
+// NewTrackingDataFetcher creates a new instance of tracking status fetcher
+func NewTrackingDataFetcher() tracking.TrackingDataFetcher {
+	return &trackingDataFetcher{}
 }
 
 func strip(str string) string {
@@ -31,7 +31,7 @@ func strip(str string) string {
 }
 
 // Fetch fetches oreder status by tracking
-func (t *trackingStatusFetcher) Fetch(trackingNumber string) (*tracking.TrackingStatus, error) {
+func (t *trackingDataFetcher) Fetch(trackingNumber string) (*tracking.TrackingData, error) {
 	pageResponse, err := http.Get(elsURL)
 	if err != nil {
 		return nil, err
@@ -75,7 +75,7 @@ func (t *trackingStatusFetcher) Fetch(trackingNumber string) (*tracking.Tracking
 		weight = "Unknown"
 	}
 
-	return &tracking.TrackingStatus{Status: strip(status), Weight: strip(weight)}, nil
+	return &tracking.TrackingData{Status: strip(status), Weight: strip(weight)}, nil
 }
 
 func sendRequest(request *http.Request) (string, error) {
