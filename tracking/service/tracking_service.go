@@ -142,15 +142,10 @@ func (s *trackingService) updateStatus(t *models.Tracking) (bool, error) {
 		s.logger.Info(fmt.Sprintf("%s status changed to %s", trackingJSON, newStatus))
 
 		t.Status = newStatus.Status
+		t.Weight = newStatus.Weight
 
 		s.trackingRepo.Update(t)
 		return true, nil
-	}
-
-	if newStatus.Weight != t.Weight {
-		t.Weight = newStatus.Weight
-		s.trackingRepo.Update(t)
-		return false, nil
 	}
 
 	return false, nil

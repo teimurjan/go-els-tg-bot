@@ -45,9 +45,9 @@ func (m *mysqlTrackingRepository) Store(t *models.Tracking) (int64, error) {
 
 	res, err := m.conn.Exec(`
 		INSERT INTO trackings
-		(name, value, status, user_id, created, modified)
+		(name, value, status, user_id, weight, created, modified)
 		VALUES (?, ?, ?, ?, ?, ?)
-	`, t.Name, t.Value, t.Status, t.UserID, currentTime, currentTime)
+	`, t.Name, t.Value, t.Status, t.UserID, t.Weight, currentTime, currentTime)
 
 	if err != nil {
 		return 0, err
@@ -66,9 +66,9 @@ func (m *mysqlTrackingRepository) Update(t *models.Tracking) error {
 
 	_, err := m.conn.Exec(`
 		UPDATE trackings SET
-		name=?, status=?, user_id=?, modified=?
+		name=?, status=?, user_id=?, weight=?, modified=?
 		WHERE value=?
-	`, t.Name, t.Status, t.UserID, currentTime, t.Value)
+	`, t.Name, t.Status, t.UserID, t.Weight, currentTime, t.Value)
 
 	return err
 }

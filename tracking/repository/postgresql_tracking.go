@@ -44,10 +44,10 @@ func (m *postgresqlTrackingRepository) Store(t *models.Tracking) (int64, error) 
 	var id int64
 	err := m.conn.QueryRow(`
 		INSERT INTO trackings
-		(name, value, status, user_id, created, modified)
+		(name, value, status, user_id, weight, created, modified)
 		VALUES ($1, $2, $3, $4, $5, $5)
 		RETURNING id;
-	`, t.Name, t.Value, t.Status, t.UserID, currentTime).Scan(&id)
+	`, t.Name, t.Value, t.Status, t.UserID, t.Weight, currentTime).Scan(&id)
 
 	if err != nil {
 		return 0, err
@@ -61,9 +61,9 @@ func (m *postgresqlTrackingRepository) Update(t *models.Tracking) error {
 
 	_, err := m.conn.Exec(`
 		UPDATE trackings
-		SET name=$1, user_id=$2, status=$3, modified=$4
-		WHERE value=$5;
-	`, t.Name, t.UserID, t.Status, currentTime, t.Value)
+		SET name=$1, user_id=$2, status=$3, weight=$4 modified=$5
+		WHERE value=$6;
+	`, t.Name, t.UserID, t.Status, t.Weight, currentTime, t.Value)
 
 	return err
 }
