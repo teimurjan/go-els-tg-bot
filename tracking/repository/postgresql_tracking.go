@@ -61,7 +61,7 @@ func (m *postgresqlTrackingRepository) Update(t *models.Tracking) error {
 
 	_, err := m.conn.Exec(`
 		UPDATE trackings
-		SET name=$1, user_id=$2, status=$3, weight=$4 modified=$5
+		SET name=$1, user_id=$2, status=$3, weight=$4, modified=$5
 		WHERE value=$6;
 	`, t.Name, t.UserID, t.Status, t.Weight, currentTime, t.Value)
 

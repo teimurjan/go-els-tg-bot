@@ -143,11 +143,11 @@ func (s *trackingService) fetchAndUpdateTrackingData(t *models.Tracking) (bool, 
 	logMsg := "Tracking data has changed."
 
 	if isWeightChanged {
-		logMsg += fmt.Sprintf("Weight: %s -> %s", t.Weight, data.Weight)
+		logMsg += fmt.Sprintf(" Weight: %s to %s.", t.Weight, data.Weight)
 		t.Weight = data.Weight
 	}
 	if isStatusChanged {
-		logMsg += fmt.Sprintf("Status: %s -> %s", t.Status, data.Status)
+		logMsg += fmt.Sprintf(" Status: %s to %s.", t.Status, data.Status)
 		t.Status = data.Status
 	}
 
