@@ -14,7 +14,7 @@ import (
 	utils "github.com/teimurjan/go-els-tg-bot/utils/regexp"
 )
 
-const elsURL = "https://els.kg/en/find_tracking"
+const elsURL = "https://els.kg/find_tracking"
 const weightSelector = "div>div>span:first-of-type"
 const statusSelector = "div>div>span:last-of-type"
 const CSRFTokenSelector = "meta[name=\"csrf-token\"]"
@@ -95,6 +95,7 @@ func sendRequest(request *http.Request) (string, error) {
 
 func getCookie(res *http.Response) (string, error) {
 	for k, v := range res.Header {
+		fmt.Println(k, v)
 		if k == "Set-Cookie" {
 			return v[0], nil
 		}
@@ -104,6 +105,7 @@ func getCookie(res *http.Response) (string, error) {
 
 func getCSRFToken(res *http.Response) (string, error) {
 	body, err := ioutil.ReadAll(res.Body)
+	fmt.Println(string(body))
 	if err != nil {
 		return "", err
 	}
