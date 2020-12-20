@@ -1,22 +1,32 @@
 package errs
 
-// NoSuchTrackingErrCode is used for identifying invalid tracking error
-const NoSuchTrackingErrCode = 1
+import (
+	"errors"
 
-// Err is a custom error object
-type Err struct {
-	code int64
-	msg  string
+	"github.com/teimurjan/go-els-tg-bot/texts"
+)
+
+type ErrNoSuchTracking struct {
+	msg string
 }
 
-// NewErr creates as new Err instance
-func NewErr(code int64, msg string) *Err {
-	return &Err{
-		code,
-		msg,
-	}
-}
-
-func (e *Err) Error() string {
+func (e *ErrNoSuchTracking) Error() string {
 	return e.msg
+}
+
+func NewBaseError(msg string) error {
+	return errors.New(msg)
+}
+
+func NewNoSuchTrackingError(tracking string) error {
+	return &ErrNoSuchTracking{msg: texts.GetTrackingNotExistsMessage(tracking)}
+}
+
+func ErrToHumanReadableMessage(e error) string {
+	switch e.(type) {
+	case *ErrNoSuchTracking:
+		return e.Error()
+	default:
+		return texts.GetCommonErrorMessage()
+	}
 }

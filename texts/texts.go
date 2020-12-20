@@ -5,7 +5,6 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/teimurjan/go-els-tg-bot/errs"
 	"github.com/teimurjan/go-els-tg-bot/models"
 )
 
@@ -19,34 +18,34 @@ const NotEnoughArgumentsForTracking string = "Please specify arguments in format
 const TrackingInfoTempl string = "Name: *%s*\nStatus: *%s*\nWeight: *%s*\nTracking: *%s*"
 
 // Delete is a text for delete inline button
-const Delete string = "Delete❓"
+const Delete string = "Delete ❓"
 
 var welcomeMessages = []string{
-	"Glad to see you here!😁\nIn order to be notified about your ELS orders, add order by typing:\n/add_tracking",
-	"Hi there!👋\nStart monitoring your orders by typing:\n/add_tracking",
-	"Hi!🙂\nCreate an order using command:\n/add_tracking",
+	"Glad to see you here! 😁\nIn order to be notified about your ELS orders, add order by typing:\n/add_tracking",
+	"Hi there! 👋\nStart monitoring your orders by typing:\n/add_tracking",
+	"Hi! 🙂\nCreate an order using command:\n/add_tracking",
 }
 
 var trackingAddedMessages = []string{
-	"Tracking was successfully added.✅\nI will notify you about its changes ASAP.",
-	"Got it, you will be notified about this order.🆗",
-	"Don't worry anymore. Your order is under my control now!💯",
+	"Tracking was successfully added. ✅\nI will notify you about its changes ASAP.",
+	"Got it, you will be notified about this order. 🆗",
+	"Don't worry anymore. Your order is under my control now! 💯",
 }
 
 var errorMessages = []string{
-	"Something went wrong.😱",
-	"Oops! An error occurred.🆘",
+	"Something went wrong. 😱",
+	"Oops! An error occurred. 🆘",
 }
 
 var trackingNotExistsMessages = []string{
-	"Tracking %s does not exist or have not been added at https://els.kg yet. Try again later.😉",
-	"It seems that tracking %s has not been added at https://els.kg yet. Did you enter everything correctly?🤔",
+	"Tracking %s does not exist or has not been added at https://els.kg yet. We'll notify you if it's added. 😉",
+	"It seems that tracking %s has not been added at https://els.kg yet. We'll notify you if it's there. 😉",
 }
 
 var trackingUpdatedMessages = []string{
-	"❗️❗️❗️Hey, here is an update of your order❗️❗️❗️",
-	"❗️❗️❗️Your order status has been changed❗️❗️❗️",
-	"❗️❗️❗️The order has an update❗️❗️❗️",
+	"❗️❗️❗️ Hey, here is an update of your order ❗️❗️❗️",
+	"❗️❗️❗️ Your order status has been changed ❗️❗️❗️",
+	"❗️❗️❗️ The order has an update ❗️❗️❗️",
 }
 
 var noTrackingsMessages = []string{
@@ -81,18 +80,13 @@ func GetTrackingAddedMessage() string {
 	return getRandMessage(trackingAddedMessages)
 }
 
-// GetErrorMessage gets an error message
-func GetErrorMessage(e error) string {
-	switch e.(type) {
-	case *errs.Err:
-		return e.Error()
-	default:
-		return getRandMessage(errorMessages)
-	}
+// GetTrackingNotExistsMessage gets tracking does not exist message
+func GetTrackingNotExistsMessage(tracking string) string {
+	return fmt.Sprintf(getRandMessage(trackingNotExistsMessages), tracking)
 }
 
 // GetTrackingNotExistsMessage gets tracking does not exist message
-func GetTrackingNotExistsMessage(tracking string) string {
+func GetTrackingCantBeAddedMessage(tracking string) string {
 	return fmt.Sprintf(getRandMessage(trackingNotExistsMessages), tracking)
 }
 
@@ -114,6 +108,11 @@ func GetEnterOrderNameMessage() string {
 // GetEnterTrackingMessage gets enter tracking message
 func GetEnterTrackingMessage() string {
 	return getRandMessage(enterTrackingMessages)
+}
+
+// GetCommonErrorMessage gets common error message
+func GetCommonErrorMessage() string {
+	return getRandMessage(errorMessages)
 }
 
 // GetTrackingInfoMessage gets message with tracking info

@@ -9,7 +9,6 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/teimurjan/go-els-tg-bot/errs"
-	"github.com/teimurjan/go-els-tg-bot/texts"
 	"github.com/teimurjan/go-els-tg-bot/tracking"
 	utils "github.com/teimurjan/go-els-tg-bot/utils/regexp"
 )
@@ -18,6 +17,9 @@ const elsURL = "https://els.kg/find_tracking"
 const weightSelector = "div>div>span:first-of-type"
 const statusSelector = "div>div>span:last-of-type"
 const CSRFTokenSelector = "meta[name=\"csrf-token\"]"
+
+const emptyStatusValue = "Not arrived at ELS yet. ⚠️"
+const emptyWeightValue = "Unknown"
 
 type trackingDataFetcher struct{}
 
@@ -64,15 +66,19 @@ func (t *trackingDataFetcher) Fetch(trackingNumber string) (*tracking.TrackingDa
 
 	status := doc.Find(statusSelector).Text()
 	if status == "" {
-		return nil, errs.NewErr(
-			errs.NoSuchTrackingErrCode,
-			texts.GetTrackingNotExistsMessage(trackingNumber),
-		)
+		if len(doc.Nodes) == 1 && doc.Find("h3") != nil {
+			return &tracking.TrackingData{
+				Status: emptyStatusValue,
+				Weight: emptyWeightValue,
+			}, nil
+		}
+
+		return nil, errs.NewBaseError("can't extract any valuable infromation from the response")
 	}
 
 	weight := doc.Find(weightSelector).Text()
 	if weight == "" {
-		weight = "Unknown"
+		weight = emptyWeightValue
 	}
 
 	return &tracking.TrackingData{Status: strip(status), Weight: strip(weight)}, nil
@@ -95,7 +101,6 @@ func sendRequest(request *http.Request) (string, error) {
 
 func getCookie(res *http.Response) (string, error) {
 	for k, v := range res.Header {
-		fmt.Println(k, v)
 		if k == "Set-Cookie" {
 			return v[0], nil
 		}
@@ -105,7 +110,6 @@ func getCookie(res *http.Response) (string, error) {
 
 func getCSRFToken(res *http.Response) (string, error) {
 	body, err := ioutil.ReadAll(res.Body)
-	fmt.Println(string(body))
 	if err != nil {
 		return "", err
 	}

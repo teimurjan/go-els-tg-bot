@@ -1,7 +1,8 @@
 package handler
 
 import (
-	"github.com/go-telegram-bot-api/telegram-bot-api"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/teimurjan/go-els-tg-bot/errs"
 	"github.com/teimurjan/go-els-tg-bot/texts"
 	"github.com/teimurjan/go-els-tg-bot/tgbot"
 	"github.com/teimurjan/go-els-tg-bot/user"
@@ -25,7 +26,7 @@ func (h *tgbotUserHandler) Join(chatID int64) {
 	_, err := h.service.Create(chatID)
 	var msg tgbotapi.MessageConfig
 	if err != nil {
-		msg = tgbotapi.NewMessage(chatID, texts.GetErrorMessage(err))
+		msg = tgbotapi.NewMessage(chatID, errs.ErrToHumanReadableMessage(err))
 	} else {
 		msg = tgbotapi.NewMessage(chatID, texts.GetWelcomeMessage())
 	}

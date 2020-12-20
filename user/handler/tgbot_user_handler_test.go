@@ -4,9 +4,10 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/go-telegram-bot-api/telegram-bot-api"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 
 	"github.com/golang/mock/gomock"
+	"github.com/teimurjan/go-els-tg-bot/errs"
 	"github.com/teimurjan/go-els-tg-bot/mocks"
 	"github.com/teimurjan/go-els-tg-bot/texts"
 )
@@ -29,7 +30,7 @@ func TestJoinError(t *testing.T) {
 	mockBot := mocks.NewMockBotAPI(ctrl)
 	mockBot.
 		EXPECT().
-		Send(tgbotapi.NewMessage(chatID, texts.GetErrorMessage(err))).
+		Send(tgbotapi.NewMessage(chatID, errs.ErrToHumanReadableMessage(err))).
 		Times(1)
 
 	handler := NewTgbotUserHandler(mockService, mockBot)

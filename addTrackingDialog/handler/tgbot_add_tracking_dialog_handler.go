@@ -1,8 +1,9 @@
 package handler
 
 import (
-	"github.com/go-telegram-bot-api/telegram-bot-api"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/teimurjan/go-els-tg-bot/addTrackingDialog"
+	"github.com/teimurjan/go-els-tg-bot/errs"
 	"github.com/teimurjan/go-els-tg-bot/texts"
 	"github.com/teimurjan/go-els-tg-bot/tgbot"
 )
@@ -28,7 +29,7 @@ func (h *addTrackingDialogHandler) StartDialog(chatID int64) {
 	_, err := h.service.StartDialog(chatID)
 	msg = texts.GetEnterOrderNameMessage()
 	if err != nil {
-		msg = texts.GetErrorMessage(err)
+		msg = errs.ErrToHumanReadableMessage(err)
 	}
 	h.bot.Send(tgbotapi.NewMessage(chatID, msg))
 }
@@ -38,7 +39,7 @@ func (h *addTrackingDialogHandler) UpdateDialogIfActive(text string, chatID int6
 	if dialog != nil && dialog.Step == 1 {
 		err = h.service.UpdateDialogName(dialog, text)
 		if err != nil {
-			h.bot.Send(tgbotapi.NewMessage(chatID, texts.GetErrorMessage(err)))
+			h.bot.Send(tgbotapi.NewMessage(chatID, errs.ErrToHumanReadableMessage(err)))
 			return
 		}
 		h.bot.Send(tgbotapi.NewMessage(chatID, texts.GetEnterTrackingMessage()))
@@ -48,7 +49,7 @@ func (h *addTrackingDialogHandler) UpdateDialogIfActive(text string, chatID int6
 	if dialog != nil && dialog.Step == 2 {
 		tracking, err := h.service.UpdateDialogTracking(dialog, text)
 		if err != nil {
-			h.bot.Send(tgbotapi.NewMessage(chatID, texts.GetErrorMessage(err)))
+			h.bot.Send(tgbotapi.NewMessage(chatID, errs.ErrToHumanReadableMessage(err)))
 			return
 		}
 		msgAdded := tgbotapi.NewMessage(chatID, texts.GetTrackingAddedMessage())

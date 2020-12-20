@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 
+	"github.com/teimurjan/go-els-tg-bot/errs"
 	"github.com/teimurjan/go-els-tg-bot/tgbot"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
@@ -38,7 +39,7 @@ func (h *tgbotTrackingHandler) AddTracking(arguments string, chatID int64) {
 
 	tracking, err := h.service.Create(trackingNumber, name, chatID)
 	if err != nil {
-		h.bot.Send(tgbotapi.NewMessage(chatID, texts.GetErrorMessage(err)))
+		h.bot.Send(tgbotapi.NewMessage(chatID, errs.ErrToHumanReadableMessage(err)))
 		return
 	}
 	msgAdded := tgbotapi.NewMessage(chatID, texts.GetTrackingAddedMessage())
@@ -52,7 +53,7 @@ func (h *tgbotTrackingHandler) AddTracking(arguments string, chatID int64) {
 func (h *tgbotTrackingHandler) GetAll(chatID int64) {
 	trackings, err := h.service.GetAll(chatID)
 	if err != nil {
-		h.bot.Send(tgbotapi.NewMessage(chatID, texts.GetErrorMessage(err)))
+		h.bot.Send(tgbotapi.NewMessage(chatID, errs.ErrToHumanReadableMessage(err)))
 		return
 	}
 
@@ -82,7 +83,7 @@ func (h *tgbotTrackingHandler) DeleteTracking(trackingID int64, chatID int64, me
 	err := h.service.Delete(trackingID)
 	var msg tgbotapi.Chattable
 	if err != nil {
-		msg = tgbotapi.NewMessage(chatID, texts.GetErrorMessage(err))
+		msg = tgbotapi.NewMessage(chatID, errs.ErrToHumanReadableMessage(err))
 	} else {
 		msg = tgbotapi.NewDeleteMessage(chatID, int(messageID))
 	}
