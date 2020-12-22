@@ -63,6 +63,19 @@ func (m *mysqlUserRepository) Store(user *models.User) (int64, error) {
 	return id, err
 }
 
+// Update updates a user
+func (m *mysqlUserRepository) Update(user *models.User) error {
+	currentTime := time.Now().UTC()
+
+	_, err := m.conn.Exec(`
+		UPDATE users
+		SET language=?, modified=?
+		WHERE id=?;
+	`, user.Language, currentTime, user.ID)
+
+	return err
+}
+
 // GetAll returns all existing users
 func (m *mysqlUserRepository) GetAll() ([]*models.User, error) {
 	var users []*models.User

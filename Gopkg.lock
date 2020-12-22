@@ -99,6 +99,18 @@
   version = "v1.0.0"
 
 [[projects]]
+  digest = "1:f61f70c09cd213033771168ff239cc6ab8d22e17f6fd8bed5dc1bd383bf988c7"
+  name = "github.com/nicksnyder/go-i18n"
+  packages = [
+    "v2/i18n",
+    "v2/internal",
+    "v2/internal/plural",
+  ]
+  pruneopts = "UT"
+  revision = "703c3bde3ea09b5f449581f4cb30f681e11351a3"
+  version = "v2.1.1"
+
+[[projects]]
   digest = "1:0028cb19b2e4c3112225cd871870f2d9cf49b9b4276531f03438a88e94be86fe"
   name = "github.com/pmezard/go-difflib"
   packages = ["difflib"]
@@ -161,6 +173,21 @@
   revision = "3a76605856fddce5718553cbb8bd50ca492a7274"
 
 [[projects]]
+  digest = "1:6ad6d4842fbd760ac211d88b8b9ab2348c82ab4a248d136ccfe2dc9dfa9c7f28"
+  name = "golang.org/x/text"
+  packages = [
+    "internal/gen",
+    "internal/language",
+    "internal/language/compact",
+    "internal/tag",
+    "language",
+    "unicode/cldr",
+  ]
+  pruneopts = "UT"
+  revision = "22f1617af38ed4cd65b3b96e02bab267e560155c"
+  version = "v0.3.4"
+
+[[projects]]
   digest = "1:c25289f43ac4a68d88b02245742347c94f1e108c534dda442188015ff80669b3"
   name = "google.golang.org/appengine"
   packages = ["cloudsql"]
@@ -180,8 +207,10 @@
     "github.com/joho/godotenv/autoload",
     "github.com/kelseyhightower/envconfig",
     "github.com/lib/pq",
+    "github.com/nicksnyder/go-i18n/v2/i18n",
     "github.com/sirupsen/logrus",
     "github.com/stretchr/testify/assert",
+    "golang.org/x/text/language",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -7,9 +7,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 
 	"github.com/golang/mock/gomock"
-	"github.com/teimurjan/go-els-tg-bot/errs"
 	"github.com/teimurjan/go-els-tg-bot/mocks"
-	"github.com/teimurjan/go-els-tg-bot/texts"
 )
 
 func TestJoinError(t *testing.T) {
@@ -20,6 +18,7 @@ func TestJoinError(t *testing.T) {
 	var chatID int64 = 1
 
 	mockService := mocks.NewMockUserService(ctrl)
+	mockI18nHelper := mocks.NewMockI18nHelper(ctrl)
 	err := errors.New("Test error")
 	mockService.
 		EXPECT().
@@ -30,10 +29,10 @@ func TestJoinError(t *testing.T) {
 	mockBot := mocks.NewMockBotAPI(ctrl)
 	mockBot.
 		EXPECT().
-		Send(tgbotapi.NewMessage(chatID, errs.ErrToHumanReadableMessage(err))).
+		Send(tgbotapi.NewMessage(chatID, "Something went wrong. 🆘")).
 		Times(1)
 
-	handler := NewTgbotUserHandler(mockService, mockBot)
+	handler := NewTgbotUserHandler(mockService, mockBot, mockI18nHelper)
 
 	handler.Join(chatID)
 }
@@ -46,6 +45,7 @@ func TestJoinSuccess(t *testing.T) {
 	var chatID int64 = 1
 
 	mockService := mocks.NewMockUserService(ctrl)
+	mockI18nHelper := mocks.NewMockI18nHelper(ctrl)
 	mockService.
 		EXPECT().
 		Create(gomock.Any()).
@@ -55,10 +55,10 @@ func TestJoinSuccess(t *testing.T) {
 	mockBot := mocks.NewMockBotAPI(ctrl)
 	mockBot.
 		EXPECT().
-		Send(tgbotapi.NewMessage(chatID, texts.GetWelcomeMessage())).
+		Send(tgbotapi.NewMessage(chatID, "Hi there! 👋\nStart monitoring your orders by typing:\n/add_tracking")).
 		Times(1)
 
-	handler := NewTgbotUserHandler(mockService, mockBot)
+	handler := NewTgbotUserHandler(mockService, mockBot, mockI18nHelper)
 
 	handler.Join(chatID)
 }

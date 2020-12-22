@@ -1,0 +1,48 @@
+
+[changeLanguage]
+hash = "sha1-fbda45712a1f812beb02148ddfff38872f0f79eb"
+other = "Язык успешно изменен."
+
+[delete]
+hash = "sha1-b2c33bd8fb647b3de6965e47442f21b49c709d0a"
+other = "Удалить ❓"
+
+[enterOrderName]
+hash = "sha1-949d1378b49326b926d2bb34a21c001b35e2f307"
+other = "Как будет называться ваш заказ?"
+
+[enterTrackingNumber]
+hash = "sha1-fb1e630bb52fd91fea7ee567b0ca187cf4fb5247"
+other = "Какой трекинг номер вашего заказа?"
+
+[error]
+hash = "sha1-3fd58eeae0cfbf0ad372e6fc3385a3838b4e3755"
+other = "Что-то пошло не так. 🆘"
+
+[greetings]
+hash = "sha1-92ba87b4296fc3eb0162269fcbc950d41e72f515"
+other = "Привет! 👋\nНачинай отслеживать трекинги по команде:\n/add_tracking"
+
+[noTrackings]
+hash = "sha1-05c9b8195d226381068d6dcfa63f43cb9d44301c"
+other = "У вас нет ни одного добавленного трекинга.\nСоздайте его по команде:\n/add_tracking"
+
+[notEnoughArgumentsForTracking]
+hash = "sha1-f2d6f1289f7ce7dcd992d1ad3ba05bf61a40b9b8"
+other = "Команда должна быть в следующем формате:\n `/add_tracking -v=\"ВАШ_ТРЕКИНГ\" -n=\"ИМЯ_ЗАКАЗА\"`"
+
+[requestLanguageChange]
+hash = "sha1-bd97fa8fbcf2018d16e50f756de1ce065baf236e"
+other = "Какой язык вы хотите выбрать?"
+
+[trackingAdded]
+hash = "sha1-a4bf246c4d95fe89c2fde132006aeebb3e9963f5"
+other = "Трекинг успешно добавлен. ✅\nЯ буду держать вас в курсе."
+
+[trackingInfo]
+hash = "sha1-2e0756e1495879201ca510bf4c09ece8672ffdca"
+other = "Имя: *{{.Name}}*\nСтатус: *{{.Status}}*\nВес: *{{.Weight}}*\nТрекинг: *{{.Value}}*"
+
+[trackingUpdated]
+hash = "sha1-5fbb855c9f857373ef92662b9c5158396349e335"
+other = "❗️❗️❗️ Статус заказа изменился ❗️❗️❗️"

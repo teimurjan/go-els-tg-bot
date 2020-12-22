@@ -38,3 +38,24 @@ func (s *userService) Create(chatID int64) (*models.User, error) {
 
 	return &user, nil
 }
+
+// Update updates a user
+func (s *userService) Update(chatID int64, language string) error {
+	user, err := s.userRepo.GetByChatID(chatID)
+	if err != nil {
+		s.logger.Error(err)
+		return err
+	}
+
+	user.Language = language
+	err = s.userRepo.Update(user)
+
+	if err != nil {
+		return err
+	}
+
+	userJSON, _ := json.Marshal(user)
+	s.logger.Info("User updated: " + string(userJSON))
+
+	return nil
+}

@@ -1,6 +1,7 @@
 package fetcher
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -8,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/teimurjan/go-els-tg-bot/errs"
 	"github.com/teimurjan/go-els-tg-bot/tracking"
 	utils "github.com/teimurjan/go-els-tg-bot/utils/regexp"
 )
@@ -73,7 +73,7 @@ func (t *trackingDataFetcher) Fetch(trackingNumber string) (*tracking.TrackingDa
 			}, nil
 		}
 
-		return nil, errs.NewBaseError("can't extract any valuable infromation from the response")
+		return nil, errors.New("can't extract any valuable infromation from the response")
 	}
 
 	weight := doc.Find(weightSelector).Text()

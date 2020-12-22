@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/sirupsen/logrus"
-	"github.com/teimurjan/go-els-tg-bot/addTrackingDialog"
+	addTrackingDialog "github.com/teimurjan/go-els-tg-bot/add-tracking-dialog"
 	"github.com/teimurjan/go-els-tg-bot/models"
 	"github.com/teimurjan/go-els-tg-bot/tracking"
 	"github.com/teimurjan/go-els-tg-bot/user"

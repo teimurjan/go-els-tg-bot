@@ -4,10 +4,11 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
-	addTrackingDialogHandler "github.com/teimurjan/go-els-tg-bot/addTrackingDialog/handler"
-	addTrackingDialogRepository "github.com/teimurjan/go-els-tg-bot/addTrackingDialog/repository"
-	addTrackingDialogService "github.com/teimurjan/go-els-tg-bot/addTrackingDialog/service"
+	addTrackingDialogHandler "github.com/teimurjan/go-els-tg-bot/add-tracking-dialog/handler"
+	addTrackingDialogRepository "github.com/teimurjan/go-els-tg-bot/add-tracking-dialog/repository"
+	addTrackingDialogService "github.com/teimurjan/go-els-tg-bot/add-tracking-dialog/service"
 	"github.com/teimurjan/go-els-tg-bot/containers"
+	helper "github.com/teimurjan/go-els-tg-bot/helper/i18n"
 	trackingFetcher "github.com/teimurjan/go-els-tg-bot/tracking/fetcher"
 	trackingHandler "github.com/teimurjan/go-els-tg-bot/tracking/handler"
 	trackingRepository "github.com/teimurjan/go-els-tg-bot/tracking/repository"
@@ -57,10 +58,11 @@ func MakeServicesContainer(
 func MakeHandlersContainer(
 	services *containers.ServicesContainer,
 	bot *tgbotapi.BotAPI,
+	i18nHelper helper.I18nHelper,
 ) *containers.HandlersContainer {
 	return containers.NewHandlersContainer(
-		userHandler.NewTgbotUserHandler(services.UserService, bot),
-		trackingHandler.NewTgbotTrackingHandler(services.TrackingService, bot),
-		addTrackingDialogHandler.NewTgbotAddTrackingDialogHandler(services.AddTrackingDialogService, bot),
+		userHandler.NewTgbotUserHandler(services.UserService, bot, i18nHelper),
+		trackingHandler.NewTgbotTrackingHandler(services.TrackingService, bot, i18nHelper),
+		addTrackingDialogHandler.NewTgbotAddTrackingDialogHandler(services.AddTrackingDialogService, bot, i18nHelper),
 	)
 }

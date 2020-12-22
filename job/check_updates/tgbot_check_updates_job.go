@@ -8,6 +8,8 @@ import (
 	"github.com/teimurjan/go-els-tg-bot/containers"
 	botFactory "github.com/teimurjan/go-els-tg-bot/factory/bot"
 	containersFactory "github.com/teimurjan/go-els-tg-bot/factory/containers"
+	helper "github.com/teimurjan/go-els-tg-bot/helper/i18n"
+	"github.com/teimurjan/go-els-tg-bot/job"
 )
 
 type tgBotJob struct {
@@ -17,15 +19,17 @@ type tgBotJob struct {
 }
 
 // NewTgBotJob creates a job for telegram bot
-func NewTgBotJob(conf *config.Config, db *sqlx.DB, logger *logrus.Logger) *tgBotJob {
+func NewTgBotJob(conf *config.Config, db *sqlx.DB, logger *logrus.Logger) job.Job {
 	bot, err := botFactory.MakeTelegramBot(conf)
 	if err != nil {
 		logger.Fatal("Can't create a telegram bot.", err)
 	}
 
 	reposContainer := containersFactory.MakeReposContainer(db)
+	i18nHelper := helper.NewI18nHelper(reposContainer.UserRepo)
 	servicesContainer := containersFactory.MakeServicesContainer(reposContainer, logger)
-	handlersContainer := containersFactory.MakeHandlersContainer(servicesContainer, bot)
+	handlersContainer := containersFactory.MakeHandlersContainer(servicesContainer, bot, i18nHelper)
+
 	return &tgBotJob{
 		reposContainer,
 		servicesContainer,

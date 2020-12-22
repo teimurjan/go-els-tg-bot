@@ -61,6 +61,19 @@ func (m *postgresqlUserRepository) Store(user *models.User) (int64, error) {
 	return id, err
 }
 
+// Update updates a user
+func (m *postgresqlUserRepository) Update(user *models.User) error {
+	currentTime := time.Now().UTC()
+
+	_, err := m.conn.Exec(`
+		UPDATE users
+		SET language=$1, modified=$2
+		WHERE id=$3;
+	`, user.Language, currentTime, user.ID)
+
+	return err
+}
+
 // GetAll returns all existing users
 func (m *postgresqlUserRepository) GetAll() ([]*models.User, error) {
 	var users []*models.User

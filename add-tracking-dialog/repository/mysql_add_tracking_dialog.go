@@ -3,7 +3,7 @@ package repository
 import (
 	"time"
 
-	"github.com/teimurjan/go-els-tg-bot/addTrackingDialog"
+	addTrackingDialog "github.com/teimurjan/go-els-tg-bot/add-tracking-dialog"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/teimurjan/go-els-tg-bot/models"

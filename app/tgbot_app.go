@@ -5,7 +5,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/go-telegram-bot-api/telegram-bot-api"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/jmoiron/sqlx"
 
 	"github.com/teimurjan/go-els-tg-bot/commands"
@@ -13,8 +13,13 @@ import (
 	"github.com/teimurjan/go-els-tg-bot/containers"
 	botFactory "github.com/teimurjan/go-els-tg-bot/factory/bot"
 	containersFactory "github.com/teimurjan/go-els-tg-bot/factory/containers"
-	"github.com/teimurjan/go-els-tg-bot/utils/callbacks"
+	helper "github.com/teimurjan/go-els-tg-bot/helper/i18n"
+	utils "github.com/teimurjan/go-els-tg-bot/utils/callbacks"
 )
+
+type TgBotApp interface {
+	Start()
+}
 
 type tgBotApp struct {
 	conf              *config.Config
@@ -26,15 +31,16 @@ type tgBotApp struct {
 }
 
 // NewTgBotApp creates new tg bot application
-func NewTgBotApp(conf *config.Config, db *sqlx.DB, logger *logrus.Logger) *tgBotApp {
+func NewTgBotApp(conf *config.Config, db *sqlx.DB, logger *logrus.Logger) TgBotApp {
 	bot, err := botFactory.MakeTelegramBot(conf)
 	if err != nil {
 		logger.Fatal("Can't create a telegram bot.", err)
 	}
 
 	reposContainer := containersFactory.MakeReposContainer(db)
+	i18nHelper := helper.NewI18nHelper(reposContainer.UserRepo)
 	servicesContainer := containersFactory.MakeServicesContainer(reposContainer, logger)
-	handlersContainer := containersFactory.MakeHandlersContainer(servicesContainer, bot)
+	handlersContainer := containersFactory.MakeHandlersContainer(servicesContainer, bot, i18nHelper)
 
 	return &tgBotApp{
 		conf,
@@ -109,6 +115,8 @@ func (tgBotApp *tgBotApp) handleCommand(update *tgbotapi.Update) {
 		}
 	} else if command == commands.GetAll {
 		tgBotApp.handlersContainer.TrackingHandler.GetAll(update.Message.Chat.ID)
+	} else if command == commands.ChangeLanguage {
+		tgBotApp.handlersContainer.UserHandler.RequestLanguageChange(update.Message.Chat.ID)
 	}
 }
 
@@ -117,6 +125,12 @@ func (tgBotApp *tgBotApp) handleCallback(update *tgbotapi.Update) {
 	if trackingID, err := utils.ParseDeleteTrackingCallback(callbackData); err == nil {
 		tgBotApp.handlersContainer.TrackingHandler.DeleteTracking(
 			trackingID,
+			update.CallbackQuery.Message.Chat.ID,
+			int64(update.CallbackQuery.Message.MessageID),
+		)
+	} else if language, err := utils.ParseChangeLanguageCallback(callbackData); err == nil {
+		tgBotApp.handlersContainer.UserHandler.ChangeLanguage(
+			language,
 			update.CallbackQuery.Message.Chat.ID,
 			int64(update.CallbackQuery.Message.MessageID),
 		)
