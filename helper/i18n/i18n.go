@@ -28,7 +28,7 @@ func NewI18nHelper(userRepo user.UserRepository) I18nHelper {
 func (helper *i18nHelper) MustGetLocalizer(chatID int64) *i18n.Localizer {
 	user, err := helper.userRepo.GetByChatID(chatID)
 	if err != nil {
-		panic(err)
+		return i18n.NewLocalizer(helper.bundle, "ru")
 	}
 
 	return i18n.NewLocalizer(helper.bundle, user.Language)
