@@ -6,6 +6,7 @@ import (
 	addTrackingDialog "github.com/teimurjan/go-els-tg-bot/add-tracking-dialog"
 	helper "github.com/teimurjan/go-els-tg-bot/helper/i18n"
 	"github.com/teimurjan/go-els-tg-bot/tgbot"
+	errsUtil "github.com/teimurjan/go-els-tg-bot/utils/errs"
 )
 
 type addTrackingDialogHandler struct {
@@ -38,12 +39,7 @@ func (h *addTrackingDialogHandler) StartDialog(chatID int64) {
 		},
 	})
 	if err != nil {
-		text = localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: &i18n.Message{
-				ID:    "error",
-				Other: "Something went wrong. 🆘",
-			},
-		})
+		text = errsUtil.GetErrorMessage(err, localizer)
 	}
 	h.bot.Send(tgbotapi.NewMessage(chatID, text))
 }
@@ -54,7 +50,7 @@ func (h *addTrackingDialogHandler) UpdateDialogIfActive(text string, chatID int6
 	if dialog != nil && dialog.Step == 1 {
 		err = h.service.UpdateDialogName(dialog, text)
 		if err != nil {
-			h.bot.Send(tgbotapi.NewMessage(chatID, localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "error"})))
+			h.bot.Send(tgbotapi.NewMessage(chatID, errsUtil.GetErrorMessage(err, localizer)))
 			return
 		}
 		text = localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -70,7 +66,7 @@ func (h *addTrackingDialogHandler) UpdateDialogIfActive(text string, chatID int6
 	if dialog != nil && dialog.Step == 2 {
 		tracking, err := h.service.UpdateDialogTracking(dialog, text)
 		if err != nil {
-			h.bot.Send(tgbotapi.NewMessage(chatID, localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "error"})))
+			h.bot.Send(tgbotapi.NewMessage(chatID, errsUtil.GetErrorMessage(err, localizer)))
 			return
 		}
 

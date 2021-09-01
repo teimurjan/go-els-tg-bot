@@ -1,22 +1,16 @@
 package fetcher
 
 import (
-	"errors"
-	"fmt"
+	"bytes"
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"net/url"
-	"strings"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/teimurjan/go-els-tg-bot/tracking"
-	utils "github.com/teimurjan/go-els-tg-bot/utils/regexp"
+	errsUtil "github.com/teimurjan/go-els-tg-bot/utils/errs"
 )
 
-const elsURL = "https://els.kg/find_tracking"
-const weightSelector = "div>div>span:first-of-type"
-const statusSelector = "div>div>span:last-of-type"
-const CSRFTokenSelector = "meta[name=\"csrf-token\"]"
+const apiURL = "https://els.kg/api/search"
 
 const emptyStatusValue = "Not arrived at ELS yet. ⚠️"
 const emptyWeightValue = "Unknown"
@@ -28,124 +22,33 @@ func NewTrackingDataFetcher() tracking.TrackingDataFetcher {
 	return &trackingDataFetcher{}
 }
 
-func strip(str string) string {
-	return strings.Join(strings.Fields(str), " ")
-}
-
 // Fetch fetches oreder status by tracking
 func (t *trackingDataFetcher) Fetch(trackingNumber string) (*tracking.TrackingData, error) {
-	pageResponse, err := http.Get(elsURL)
-	if err != nil {
-		return nil, err
-	}
+	var data = []byte(`{"tracking":"` + trackingNumber + `"}`)
+	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(data))
+	req.Header.Set("Content-Type", "application/json")
 
-	cookie, err := getCookie(pageResponse)
-	if err != nil {
-		return nil, err
-	}
-
-	CSRFToken, err := getCSRFToken(pageResponse)
-	if err != nil {
-		return nil, err
-	}
-
-	request, err := NewRequestBuilder(elsURL+getQuery(trackingNumber), CSRFToken, cookie).Build()
-	if err != nil {
-		return nil, err
-	}
-
-	body, err := sendRequest(request)
-	if err != nil {
-		return nil, err
-	}
-
-	doc, err := getHTMLFromResponse(string(body))
-	if err != nil {
-		return nil, err
-	}
-
-	status := doc.Find(statusSelector).Text()
-	if status == "" {
-		if len(doc.Nodes) == 1 && doc.Find("h3") != nil {
-			return &tracking.TrackingData{
-				Status: emptyStatusValue,
-				Weight: emptyWeightValue,
-			}, nil
-		}
-
-		return nil, errors.New("can't extract any valuable infromation from the response")
-	}
-
-	weight := doc.Find(weightSelector).Text()
-	if weight == "" {
-		weight = emptyWeightValue
-	}
-
-	return &tracking.TrackingData{Status: strip(status), Weight: strip(weight)}, nil
-}
-
-func sendRequest(request *http.Request) (string, error) {
 	client := &http.Client{}
-	statusResponse, err := client.Do(request)
+	resp, err := client.Do(req)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-
-	body, err := ioutil.ReadAll(statusResponse.Body)
-	if err != nil {
-		return "", err
+	if resp.StatusCode == 422 {
+		return nil, errsUtil.NewI18NErr("invalidTrackingNumberFormat")
 	}
-
-	return string(body), nil
-}
-
-func getCookie(res *http.Response) (string, error) {
-	for k, v := range res.Header {
-		if k == "Set-Cookie" {
-			return v[0], nil
-		}
+	if resp.StatusCode == 404 {
+		return &tracking.TrackingData{
+			Status: emptyStatusValue,
+			Weight: emptyWeightValue,
+		}, nil
 	}
-	return "", fmt.Errorf("Can't get cookie")
-}
+	defer resp.Body.Close()
 
-func getCSRFToken(res *http.Response) (string, error) {
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return "", err
-	}
+	body, _ := ioutil.ReadAll(resp.Body)
 
-	regexpGroups := utils.GetGroups(
-		`<meta name="csrf-token" content="(?P<CSRFToken>.*)" />`,
-		string(body),
-	)
-	CSRFToken, ok := regexpGroups["CSRFToken"]
+	trackingData := &tracking.TrackingData{}
 
-	if ok {
-		return CSRFToken, nil
-	}
+	json.Unmarshal([]byte(string(body)), &trackingData)
 
-	return "", fmt.Errorf("Can't get CSRFToken")
-}
-
-func getQuery(trackingNumber string) string {
-	return "?" + url.PathEscape(
-		fmt.Sprintf(
-			"utf8=✓&q=%s&commit=Search",
-			trackingNumber,
-		),
-	)
-}
-
-func getHTMLFromResponse(response string) (*goquery.Document, error) {
-	regexpGroups := utils.GetGroups(`^.*\.innerHTML\s*=\s*"(?P<html>.*)"`, response)
-
-	html, ok := regexpGroups["html"]
-	if ok {
-		replacer := strings.NewReplacer("\\n", "", "\\", "")
-		return goquery.NewDocumentFromReader(
-			strings.NewReader(replacer.Replace(html)),
-		)
-	}
-
-	return nil, fmt.Errorf("Can't get HTML from response %s", response)
+	return trackingData, nil
 }

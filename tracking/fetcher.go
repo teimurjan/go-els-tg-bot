@@ -1,8 +1,8 @@
 package tracking
 
 type TrackingData struct {
-	Status string
-	Weight string
+	Status string `json:"status_warehouse"`
+	Weight string `json:"weight"`
 }
 
 type TrackingDataFetcher interface {

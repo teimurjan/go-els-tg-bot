@@ -2,6 +2,17 @@
 
 
 [[projects]]
+  digest = "1:0e4212e56edb036472ab8b7d88f8d40de67c5c46b8e93cfc58602a7a945a100b"
+  name = "github.com/BurntSushi/toml"
+  packages = [
+    ".",
+    "internal",
+  ]
+  pruneopts = "UT"
+  revision = "641c3cf2148ad11ca058c000eab0453dd5d67954"
+  version = "v0.4.1"
+
+[[projects]]
   digest = "1:a62f6ed230a8cd138a9efbe718e7d0b0294f139266f5f55cd942769a9aac8de2"
   name = "github.com/PuerkitoBio/goquery"
   packages = ["."]
@@ -199,6 +210,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/BurntSushi/toml",
     "github.com/PuerkitoBio/goquery",
     "github.com/go-sql-driver/mysql",
     "github.com/go-telegram-bot-api/telegram-bot-api",

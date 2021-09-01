@@ -14,7 +14,7 @@ import (
 	botFactory "github.com/teimurjan/go-els-tg-bot/factory/bot"
 	containersFactory "github.com/teimurjan/go-els-tg-bot/factory/containers"
 	helper "github.com/teimurjan/go-els-tg-bot/helper/i18n"
-	utils "github.com/teimurjan/go-els-tg-bot/utils/callbacks"
+	callbacksUtil "github.com/teimurjan/go-els-tg-bot/utils/callbacks"
 )
 
 type TgBotApp interface {
@@ -122,13 +122,13 @@ func (tgBotApp *tgBotApp) handleCommand(update *tgbotapi.Update) {
 
 func (tgBotApp *tgBotApp) handleCallback(update *tgbotapi.Update) {
 	callbackData := update.CallbackQuery.Data
-	if trackingID, err := utils.ParseDeleteTrackingCallback(callbackData); err == nil {
+	if trackingID, err := callbacksUtil.ParseDeleteTrackingCallback(callbackData); err == nil {
 		tgBotApp.handlersContainer.TrackingHandler.DeleteTracking(
 			trackingID,
 			update.CallbackQuery.Message.Chat.ID,
 			int64(update.CallbackQuery.Message.MessageID),
 		)
-	} else if language, err := utils.ParseChangeLanguageCallback(callbackData); err == nil {
+	} else if language, err := callbacksUtil.ParseChangeLanguageCallback(callbackData); err == nil {
 		tgBotApp.handlersContainer.UserHandler.ChangeLanguage(
 			language,
 			update.CallbackQuery.Message.Chat.ID,

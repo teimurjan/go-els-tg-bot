@@ -6,6 +6,7 @@ import (
 	helper "github.com/teimurjan/go-els-tg-bot/helper/i18n"
 	"github.com/teimurjan/go-els-tg-bot/tgbot"
 	"github.com/teimurjan/go-els-tg-bot/user"
+	errsUtil "github.com/teimurjan/go-els-tg-bot/utils/errs"
 )
 
 type tgbotUserHandler struct {
@@ -29,7 +30,7 @@ func (h *tgbotUserHandler) Join(chatID int64) {
 	_, err := h.service.Create(chatID)
 	var msg tgbotapi.MessageConfig
 	if err != nil {
-		msg = tgbotapi.NewMessage(chatID, localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "error"}))
+		h.bot.Send(tgbotapi.NewMessage(chatID, errsUtil.GetErrorMessage(err, localizer)))
 	} else {
 		text := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: &i18n.Message{

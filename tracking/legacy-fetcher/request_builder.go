@@ -1,4 +1,4 @@
-package fetcher
+package legacyFetcher
 
 import "net/http"
 

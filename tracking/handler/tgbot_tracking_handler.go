@@ -3,13 +3,13 @@ package handler
 import (
 	"fmt"
 
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	helper "github.com/teimurjan/go-els-tg-bot/helper/i18n"
 	"github.com/teimurjan/go-els-tg-bot/tgbot"
-
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/teimurjan/go-els-tg-bot/tracking"
-	utils "github.com/teimurjan/go-els-tg-bot/utils/arguments"
+	argumentsUtil "github.com/teimurjan/go-els-tg-bot/utils/arguments"
+	errsUtil "github.com/teimurjan/go-els-tg-bot/utils/errs"
 )
 
 type tgbotTrackingHandler struct {
@@ -32,7 +32,7 @@ func NewTgbotTrackingHandler(
 }
 
 func (h *tgbotTrackingHandler) AddTracking(arguments string, chatID int64) {
-	parsedArguments := utils.ParseArguments(arguments)
+	parsedArguments := argumentsUtil.ParseArguments(arguments)
 	trackingNumber, trackingOk := parsedArguments["v"]
 	name, nameOk := parsedArguments["n"]
 	localizer := h.i18nHelper.MustGetLocalizer(chatID)
@@ -50,7 +50,7 @@ func (h *tgbotTrackingHandler) AddTracking(arguments string, chatID int64) {
 
 	tracking, err := h.service.Create(trackingNumber, name, chatID)
 	if err != nil {
-		h.bot.Send(tgbotapi.NewMessage(chatID, localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "error"})))
+		h.bot.Send(tgbotapi.NewMessage(chatID, errsUtil.GetErrorMessage(err, localizer)))
 		return
 	}
 	addedText := localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -78,7 +78,7 @@ func (h *tgbotTrackingHandler) GetAll(chatID int64) {
 	trackings, err := h.service.GetAll(chatID)
 	localizer := h.i18nHelper.MustGetLocalizer(chatID)
 	if err != nil {
-		h.bot.Send(tgbotapi.NewMessage(chatID, localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "error"})))
+		h.bot.Send(tgbotapi.NewMessage(chatID, errsUtil.GetErrorMessage(err, localizer)))
 		return
 	}
 
@@ -125,7 +125,7 @@ func (h *tgbotTrackingHandler) DeleteTracking(trackingID int64, chatID int64, me
 	err := h.service.Delete(trackingID)
 	var msg tgbotapi.Chattable
 	if err != nil {
-		msg = tgbotapi.NewMessage(chatID, localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "error"}))
+		h.bot.Send(tgbotapi.NewMessage(chatID, errsUtil.GetErrorMessage(err, localizer)))
 	} else {
 		msg = tgbotapi.NewDeleteMessage(chatID, int(messageID))
 	}
