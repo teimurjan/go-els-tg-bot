@@ -7,6 +7,7 @@ import (
 	addTrackingDialogHandler "github.com/teimurjan/go-els-tg-bot/add-tracking-dialog/handler"
 	addTrackingDialogRepository "github.com/teimurjan/go-els-tg-bot/add-tracking-dialog/repository"
 	addTrackingDialogService "github.com/teimurjan/go-els-tg-bot/add-tracking-dialog/service"
+	"github.com/teimurjan/go-els-tg-bot/config"
 	"github.com/teimurjan/go-els-tg-bot/containers"
 	helper "github.com/teimurjan/go-els-tg-bot/helper/i18n"
 	trackingFetcher "github.com/teimurjan/go-els-tg-bot/tracking/fetcher"
@@ -31,8 +32,9 @@ func MakeReposContainer(db *sqlx.DB) *containers.RepositoriesContainer {
 func MakeServicesContainer(
 	repos *containers.RepositoriesContainer,
 	logger *logrus.Logger,
+	conf *config.Config,
 ) *containers.ServicesContainer {
-	statusFetcher := trackingFetcher.NewTrackingDataFetcher()
+	statusFetcher := trackingFetcher.NewTrackingDataFetcher(conf)
 	return containers.NewServicesContainer(
 		userService.NewUserService(
 			repos.UserRepo,

@@ -10,6 +10,8 @@ type Config struct {
 	Debug            bool   `envconfig:"DEBUG"`
 	LogFile          string `envconfig:"LOG_FILE"`
 	Port             string `envconfig:"PORT"`
+	ElsUserEmail     string `envconfig:"ELS_USER_EMAIL" required:"true"`
+	ElsUserPassword  string `envconfig:"ELS_USER_PASSWORD" required:"true"`
 }
 
 func NewConfig() (*Config, error) {

@@ -39,7 +39,7 @@ func NewTgBotApp(conf *config.Config, db *sqlx.DB, logger *logrus.Logger) TgBotA
 
 	reposContainer := containersFactory.MakeReposContainer(db)
 	i18nHelper := helper.NewI18nHelper(reposContainer.UserRepo)
-	servicesContainer := containersFactory.MakeServicesContainer(reposContainer, logger)
+	servicesContainer := containersFactory.MakeServicesContainer(reposContainer, logger, conf)
 	handlersContainer := containersFactory.MakeHandlersContainer(servicesContainer, bot, i18nHelper)
 
 	return &tgBotApp{
