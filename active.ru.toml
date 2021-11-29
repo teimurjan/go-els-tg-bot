@@ -22,6 +22,10 @@ other = "Что-то пошло не так. 🆘"
 hash = "sha1-92ba87b4296fc3eb0162269fcbc950d41e72f515"
 other = "Привет! 👋\nНачинай отслеживать трекинги по команде:\n/add_tracking"
 
+[invalidTrackingNumberFormat]
+hash = "sha1-302d811afeb8b92dcb021cdc42e74c1417af6114"
+other = "Неверный формат трекинга."
+
 [noTrackings]
 hash = "sha1-05c9b8195d226381068d6dcfa63f43cb9d44301c"
 other = "У вас нет ни одного добавленного трекинга.\nСоздайте его по команде:\n/add_tracking"
@@ -46,6 +50,10 @@ other = "Имя: *{{.Name}}*\nСтатус: *{{.Status}}*\nВес: *{{.Weight}}*
 hash = "sha1-5fbb855c9f857373ef92662b9c5158396349e335"
 other = "❗️❗️❗️ Статус заказа изменился ❗️❗️❗️"
 
-[invalidTrackingNumberFormat]
-hash = "sha1-302d811afeb8b92dcb021cdc42e74c1417af6114"
-other = "Неверный формат трекинга."
+[usaAddressInfo]
+hash = "sha1-ffc346e9e846b36df5bbf1efbe46d36a0ffdad80"
+other = "Street Address: *{{.Street}}*\nCity: *{{.City}}*\nState: *{{.State}}*\nZip Code: *{{.Zip}}*\nPhone Number: *{{.PhoneNumber}}*"
+
+[usaAddressUpdated]
+hash = "sha1-ba96fa95137e8ea66fce29c0ed3919fc1177c167"
+other = "❗️❗️❗️ Некоторые поля адреса склада в США были обновлены ❗️❗️❗️"

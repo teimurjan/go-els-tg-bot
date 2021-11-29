@@ -59,3 +59,9 @@ func (s *userService) Update(chatID int64, language string) error {
 
 	return nil
 }
+
+// GetAll gets all users
+func (s *userService) GetAll() ([]*models.User, error) {
+	return s.userRepo.GetAll()
+
+}

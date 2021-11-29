@@ -117,6 +117,8 @@ func (tgBotApp *tgBotApp) handleCommand(update *tgbotapi.Update) {
 		tgBotApp.handlersContainer.TrackingHandler.GetAll(update.Message.Chat.ID)
 	} else if command == commands.ChangeLanguage {
 		tgBotApp.handlersContainer.UserHandler.RequestLanguageChange(update.Message.Chat.ID)
+	} else if command == commands.GetUsaAddress {
+		tgBotApp.handlersContainer.UsaAddressHandler.GetAddress(update.Message.Chat.ID)
 	}
 }
 

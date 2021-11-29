@@ -14,6 +14,10 @@ import (
 	trackingHandler "github.com/teimurjan/go-els-tg-bot/tracking/handler"
 	trackingRepository "github.com/teimurjan/go-els-tg-bot/tracking/repository"
 	trackingService "github.com/teimurjan/go-els-tg-bot/tracking/service"
+	usaAddressFetcher "github.com/teimurjan/go-els-tg-bot/usa-address/fetcher"
+	usaAddressHandler "github.com/teimurjan/go-els-tg-bot/usa-address/handler"
+	usaAddressRepository "github.com/teimurjan/go-els-tg-bot/usa-address/repository"
+	usaAddressService "github.com/teimurjan/go-els-tg-bot/usa-address/service"
 	userHandler "github.com/teimurjan/go-els-tg-bot/user/handler"
 	userRepository "github.com/teimurjan/go-els-tg-bot/user/repository"
 	userService "github.com/teimurjan/go-els-tg-bot/user/service"
@@ -25,6 +29,7 @@ func MakeReposContainer(db *sqlx.DB) *containers.RepositoriesContainer {
 		userRepository.NewPostgresqlUserRepository(db),
 		trackingRepository.NewPostgresqlTrackingRepository(db),
 		addTrackingDialogRepository.NewPostgresqlAddTrackingDialogRepository(db),
+		usaAddressRepository.NewPostgresqlUsaAddressRepository(db),
 	)
 }
 
@@ -35,6 +40,7 @@ func MakeServicesContainer(
 	conf *config.Config,
 ) *containers.ServicesContainer {
 	statusFetcher := trackingFetcher.NewTrackingDataFetcher(conf)
+	usaAddressFetcher := usaAddressFetcher.NewUsaAddressFetcher(conf)
 	return containers.NewServicesContainer(
 		userService.NewUserService(
 			repos.UserRepo,
@@ -53,6 +59,11 @@ func MakeServicesContainer(
 			statusFetcher,
 			logger,
 		),
+		usaAddressService.NewUsaAddressService(
+			repos.UsaAddressRepo,
+			usaAddressFetcher,
+			logger,
+		),
 	)
 }
 
@@ -66,5 +77,6 @@ func MakeHandlersContainer(
 		userHandler.NewTgbotUserHandler(services.UserService, bot, i18nHelper),
 		trackingHandler.NewTgbotTrackingHandler(services.TrackingService, bot, i18nHelper),
 		addTrackingDialogHandler.NewTgbotAddTrackingDialogHandler(services.AddTrackingDialogService, bot, i18nHelper),
+		usaAddressHandler.NewTgbotUsaAddressHandler(services.UsaAddressService, services.UserService, bot, i18nHelper),
 	)
 }
