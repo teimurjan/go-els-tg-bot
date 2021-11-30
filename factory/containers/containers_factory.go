@@ -39,7 +39,7 @@ func MakeServicesContainer(
 	logger *logrus.Logger,
 	conf *config.Config,
 ) *containers.ServicesContainer {
-	statusFetcher := trackingFetcher.NewTrackingDataFetcher(conf)
+	trackingNumberFetcher := trackingFetcher.NewTrackingNumberFetcher(conf)
 	usaAddressFetcher := usaAddressFetcher.NewUsaAddressFetcher(conf)
 	return containers.NewServicesContainer(
 		userService.NewUserService(
@@ -49,14 +49,14 @@ func MakeServicesContainer(
 		trackingService.NewTrackingService(
 			repos.TrackingRepo,
 			repos.UserRepo,
-			statusFetcher,
+			trackingNumberFetcher,
 			logger,
 		),
 		addTrackingDialogService.NewAddTrackingDialogService(
 			repos.AddTrackingDialogRepo,
 			repos.UserRepo,
 			repos.TrackingRepo,
-			statusFetcher,
+			trackingNumberFetcher,
 			logger,
 		),
 		usaAddressService.NewUsaAddressService(

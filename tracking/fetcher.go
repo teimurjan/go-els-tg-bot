@@ -1,10 +1,7 @@
 package tracking
 
-type TrackingData struct {
-	Status string `json:"status_warehouse"`
-	Weight string `json:"weight"`
-}
+import "github.com/teimurjan/go-els-tg-bot/models"
 
-type TrackingDataFetcher interface {
-	Fetch(trackingNumber string) (*TrackingData, error)
+type TrackingNumberFetcher interface {
+	Fetch(trackingNumber string) (*models.Tracking, error)
 }

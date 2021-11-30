@@ -11,29 +11,29 @@ import (
 )
 
 type trackingService struct {
-	trackingRepo  tracking.TrackingRepository
-	userRepo      user.UserRepository
-	statusFetcher tracking.TrackingDataFetcher
-	logger        *logrus.Logger
+	trackingRepo tracking.TrackingRepository
+	userRepo     user.UserRepository
+	fetcher      tracking.TrackingNumberFetcher
+	logger       *logrus.Logger
 }
 
 // NewTrackingService creates new trackingService instance
 func NewTrackingService(
 	trackingRepo tracking.TrackingRepository,
 	userRepo user.UserRepository,
-	statusFetcher tracking.TrackingDataFetcher,
+	fetcher tracking.TrackingNumberFetcher,
 	logger *logrus.Logger,
 ) tracking.TrackingService {
 	return &trackingService{
 		trackingRepo,
 		userRepo,
-		statusFetcher,
+		fetcher,
 		logger,
 	}
 }
 
 func (s *trackingService) Create(value string, name string, chatID int64) (*models.Tracking, error) {
-	status, err := s.statusFetcher.Fetch(value)
+	status, err := s.fetcher.Fetch(value)
 	if err != nil {
 		s.logger.Error(err)
 		return nil, err
@@ -132,23 +132,23 @@ func (s *trackingService) GetUpdates() ([]*tracking.TrackingUpdate, error) {
 }
 
 func (s *trackingService) fetchAndUpdateTrackingData(t *models.Tracking) (bool, bool, error) {
-	data, err := s.statusFetcher.Fetch(t.Value)
+	fetchedTracking, err := s.fetcher.Fetch(t.Value)
 	if err != nil {
 		return false, false, err
 	}
 
-	isStatusChanged := data.Status != t.Status
-	isWeightChanged := data.Weight != t.Weight
+	isStatusChanged := fetchedTracking.Status != t.Status
+	isWeightChanged := fetchedTracking.Weight != t.Weight
 
-	logMsg := "Tracking data has changed."
+	logMsg := "Tracking number has changed."
 
 	if isWeightChanged {
-		logMsg += fmt.Sprintf(" Weight: %s to %s.", t.Weight, data.Weight)
-		t.Weight = data.Weight
+		logMsg += fmt.Sprintf(" Weight: %s to %s.", t.Weight, fetchedTracking.Weight)
+		t.Weight = fetchedTracking.Weight
 	}
 	if isStatusChanged {
-		logMsg += fmt.Sprintf(" Status: %s to %s.", t.Status, data.Status)
-		t.Status = data.Status
+		logMsg += fmt.Sprintf(" Status: %s to %s.", t.Status, fetchedTracking.Status)
+		t.Status = fetchedTracking.Status
 	}
 
 	if isStatusChanged || isWeightChanged {
