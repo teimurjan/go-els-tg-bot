@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"reflect"
+
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	helper "github.com/teimurjan/go-els-tg-bot/helper/i18n"
@@ -58,6 +60,12 @@ func (h *tgbotUsaAddressHandler) CheckUpdates() {
 	updatedFields, newAddress, err := h.service.GetUpdates()
 	if err != nil || len(updatedFields) == 0 {
 		return
+	}
+
+	for _, field := range updatedFields {
+		newAddressReflection := reflect.ValueOf(newAddress)
+		fieldReflection := newAddressReflection.Elem().FieldByName(field)
+		fieldReflection.SetString(fieldReflection.String() + " 🆕")
 	}
 
 	for _, user := range users {
