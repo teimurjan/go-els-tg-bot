@@ -39,5 +39,5 @@ func NewTgBotJob(conf *config.Config, db *sqlx.DB, logger *logrus.Logger) job.Jo
 
 // Do executes TgBotJob
 func (tgBotJob *tgBotJob) Do() {
-	tgBotJob.handlersContainer.UsaAddressHandler.CheckUpdates()
+	tgBotJob.handlersContainer.UsaAddressHandler.CheckDiff()
 }

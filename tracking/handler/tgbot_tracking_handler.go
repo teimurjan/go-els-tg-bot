@@ -75,8 +75,9 @@ func (h *tgbotTrackingHandler) AddTracking(arguments string, chatID int64) {
 }
 
 func (h *tgbotTrackingHandler) GetAll(chatID int64) {
-	trackings, err := h.service.GetAll(chatID)
 	localizer := h.i18nHelper.MustGetLocalizer(chatID)
+
+	trackings, err := h.service.GetForChat(chatID)
 	if err != nil {
 		h.bot.Send(tgbotapi.NewMessage(chatID, errsUtil.GetErrorMessage(err, localizer)))
 		return
@@ -90,33 +91,44 @@ func (h *tgbotTrackingHandler) GetAll(chatID int64) {
 			},
 		})
 		h.bot.Send(tgbotapi.NewMessage(chatID, text))
-		return
 	}
 
-	deleteText := localizer.MustLocalize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:    "delete",
-			Other: "Delete ❓",
-		},
-	})
-	for _, tracking := range trackings {
-		inlineBtns := tgbotapi.NewInlineKeyboardMarkup(
-			[]tgbotapi.InlineKeyboardButton{
-				tgbotapi.NewInlineKeyboardButtonData(
-					deleteText,
-					fmt.Sprintf("/delete_tracking %d", tracking.ID),
-				),
-			},
-		)
+	trackingCh, errCh := h.service.SyncAll(trackings)
+	i := 0
 
-		text := localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID:    "trackingInfo",
-			TemplateData: tracking,
-		})
-		msg := tgbotapi.NewMessage(chatID, text)
-		msg.ParseMode = tgbotapi.ModeMarkdown
-		msg.ReplyMarkup = inlineBtns
-		h.bot.Send(msg)
+	for i < len(trackings) {
+		select {
+		case tracking := <-trackingCh:
+			deleteText := localizer.MustLocalize(&i18n.LocalizeConfig{
+				DefaultMessage: &i18n.Message{
+					ID:    "delete",
+					Other: "Delete ❓",
+				},
+			})
+
+			inlineBtns := tgbotapi.NewInlineKeyboardMarkup(
+				[]tgbotapi.InlineKeyboardButton{
+					tgbotapi.NewInlineKeyboardButtonData(
+						deleteText,
+						fmt.Sprintf("/delete_tracking %d", tracking.ID),
+					),
+				},
+			)
+
+			text := localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID:    "trackingInfo",
+				TemplateData: tracking,
+			})
+			msg := tgbotapi.NewMessage(chatID, text)
+			msg.ParseMode = tgbotapi.ModeMarkdown
+			msg.ReplyMarkup = inlineBtns
+			h.bot.Send(msg)
+		case err := <-errCh:
+			h.bot.Send(tgbotapi.NewMessage(chatID, errsUtil.GetErrorMessage(err, localizer)))
+			return
+		}
+
+		i++
 	}
 }
 
@@ -133,27 +145,43 @@ func (h *tgbotTrackingHandler) DeleteTracking(trackingID int64, chatID int64, me
 }
 
 func (h *tgbotTrackingHandler) CheckUpdates() {
-	updates, err := h.service.GetUpdates()
-	if err == nil {
-		for _, update := range updates {
-			localizer := h.i18nHelper.MustGetLocalizer(update.User.ChatID)
-			infoText := localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:    "trackingInfo",
-				TemplateData: update.Tracking,
-			})
-			text := localizer.MustLocalize(&i18n.LocalizeConfig{
-				DefaultMessage: &i18n.Message{
-					ID:    "trackingUpdated",
-					Other: "❗️❗️❗️ Your order status has been changed ❗️❗️❗️",
-				},
-			}) + "\n\n" + infoText
+	groupedByUser, err := h.service.GetAllGroupedByUser()
+	if err != nil {
+		return
+	}
 
-			msg := tgbotapi.NewMessage(
-				update.User.ChatID,
-				text,
-			)
-			msg.ParseMode = tgbotapi.ModeMarkdown
-			h.bot.Send(msg)
+	for user, trackings := range groupedByUser {
+		localizer := h.i18nHelper.MustGetLocalizer(user.ChatID)
+		trackingCh, errCh := h.service.SyncOnlyUpdated(trackings)
+
+		i := 0
+
+		for i < len(trackings) {
+			select {
+			case tracking := <-trackingCh:
+				infoText := localizer.MustLocalize(&i18n.LocalizeConfig{
+					MessageID:    "trackingInfo",
+					TemplateData: tracking,
+				})
+				text := localizer.MustLocalize(&i18n.LocalizeConfig{
+					DefaultMessage: &i18n.Message{
+						ID:    "trackingUpdated",
+						Other: "❗️❗️❗️ Your order status has been changed ❗️❗️❗️",
+					},
+				}) + "\n\n" + infoText
+
+				msg := tgbotapi.NewMessage(
+					user.ChatID,
+					text,
+				)
+				msg.ParseMode = tgbotapi.ModeMarkdown
+				h.bot.Send(msg)
+			case err := <-errCh:
+				h.bot.Send(tgbotapi.NewMessage(user.ChatID, errsUtil.GetErrorMessage(err, localizer)))
+				return
+			}
+
+			i++
 		}
 	}
 }

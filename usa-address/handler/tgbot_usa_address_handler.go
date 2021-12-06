@@ -51,28 +51,33 @@ func (h *tgbotUsaAddressHandler) GetAddress(chatID int64) {
 	h.bot.Send(msg)
 }
 
-func (h *tgbotUsaAddressHandler) CheckUpdates() {
+func (h *tgbotUsaAddressHandler) CheckDiff() {
 	users, err := h.userService.GetAll()
 	if err != nil {
 		return
 	}
 
-	updatedFields, newAddress, err := h.service.GetUpdates()
-	if err != nil || len(updatedFields) == 0 {
+	address, changelog, err := h.service.GetAddressWithDiff()
+	if err != nil || len(changelog) == 0 {
 		return
 	}
 
-	for _, field := range updatedFields {
-		newAddressReflection := reflect.ValueOf(newAddress)
-		fieldReflection := newAddressReflection.Elem().FieldByName(field)
-		fieldReflection.SetString(fieldReflection.String() + " 🆕")
+	for _, change := range changelog {
+		value := reflect.ValueOf(address)
+
+		fieldName := change.Path[len(change.Path)-1]
+		fieldValue := value.Elem().FieldByName(fieldName)
+
+		if fieldValue.Kind() == reflect.String {
+			fieldValue.SetString(change.To.(string) + " 🆕")
+		}
 	}
 
 	for _, user := range users {
 		localizer := h.i18nHelper.MustGetLocalizer(user.ChatID)
 		infoText := localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:    "usaAddressInfo",
-			TemplateData: newAddress,
+			TemplateData: address,
 		})
 		text := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: &i18n.Message{

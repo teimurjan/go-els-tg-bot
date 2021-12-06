@@ -274,7 +274,7 @@ func fetchTrackingAtShip24(trackingNumber string) (*http.Response, error) {
 	payload := []byte("{\"userAgent\":\"\",\"os\":\"Mac\",\"browser\":\"Chrome\",\"device\":\"Unknown\",\"os_version\":\"mac-os-x-15\",\"browser_version\":\"96.0.4664.55\",\"uL\":\"en-US\"}")
 	body := bytes.NewReader(payload)
 
-	req, err := http.NewRequest("POST", "https://api.ship24.com/api/parcels/"+trackingNumber+"?lang=en", body)
+	req, err := http.NewRequest("POST", "https://api.ship24.com/api/parcels/update/"+trackingNumber+"?lang=en", body)
 	if err != nil {
 		return nil, err
 	}

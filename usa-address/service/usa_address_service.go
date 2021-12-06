@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/r3labs/diff"
 	"github.com/sirupsen/logrus"
 	"github.com/teimurjan/go-els-tg-bot/models"
 	usaAddress "github.com/teimurjan/go-els-tg-bot/usa-address"
@@ -53,47 +54,24 @@ func (s *usaAddressService) GetFirst() (*models.UsaAddress, error) {
 	return address, nil
 }
 
-func (s *usaAddressService) GetUpdates() ([]string, *models.UsaAddress, error) {
-	updatedFields := make([]string, 0)
-
+func (s *usaAddressService) GetAddressWithDiff() (*models.UsaAddress, diff.Changelog, error) {
 	address, err := s.GetFirst()
 	if err != nil {
-		return updatedFields, nil, err
+		return nil, nil, err
 	}
 	newAddress, err := s.fetcher.Fetch()
 	if err != nil {
-		return updatedFields, nil, err
+		return nil, nil, err
 	}
 
-	logMsg := "UsaAddress data has changed."
+	changelog, err := diff.Diff(address, newAddress)
 
-	if newAddress.Street != address.Street {
-		logMsg += fmt.Sprintf("\nStreet: %s to %s.", address.Street, newAddress.Street)
-		updatedFields = append(updatedFields, "Street")
-	}
-	if newAddress.City != address.City {
-		logMsg += fmt.Sprintf("\nCity: %s to %s.", address.City, newAddress.City)
-		updatedFields = append(updatedFields, "City")
-	}
-	if newAddress.State != address.State {
-		logMsg += fmt.Sprintf("\nState: %s to %s.", address.State, newAddress.State)
-		updatedFields = append(updatedFields, "State")
-	}
-	if newAddress.Zip != address.Zip {
-		logMsg += fmt.Sprintf("\nZip: %s to %s.", address.Zip, newAddress.Zip)
-		updatedFields = append(updatedFields, "Zip")
-	}
-	if newAddress.PhoneNumber != address.PhoneNumber {
-		logMsg += fmt.Sprintf("\nPhoneNumber: %s to %s.", address.PhoneNumber, newAddress.PhoneNumber)
-		updatedFields = append(updatedFields, "PhoneNumber")
-	}
-
-	if len(updatedFields) > 0 {
-		s.logger.Info(logMsg)
+	if len(changelog) > 0 {
+		s.logger.Info("UsaAddress data has changed.")
 		s.usaAddressRepo.Update(newAddress)
 	}
 
-	return updatedFields, newAddress, nil
+	return address, changelog, nil
 }
 
 func (s *usaAddressService) Delete() error {
