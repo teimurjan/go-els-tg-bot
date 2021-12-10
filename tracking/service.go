@@ -9,7 +9,7 @@ type TrackingService interface {
 	GetForChat(chatID int64) ([]*models.Tracking, error)
 	Update(tracking *models.Tracking) (bool, error)
 	Delete(trackingID int64) error
-	SyncAll(trackings []*models.Tracking) (chan *models.Tracking, chan error)
-	SyncOnlyUpdated(trackings []*models.Tracking) (chan *models.Tracking, chan error)
+	SyncAll(trackings []*models.Tracking) (chan *models.Tracking, chan error, chan bool)
+	SyncOnlyUpdated(trackings []*models.Tracking) (chan *models.Tracking, chan error, chan bool)
 	GetAllGroupedByUser() (map[*models.User][]*models.Tracking, error)
 }

@@ -109,9 +109,12 @@ func (s *trackingService) Delete(trackingID int64) error {
 	return err
 }
 
-func (s *trackingService) SyncAll(trackings []*models.Tracking) (chan *models.Tracking, chan error) {
+func (s *trackingService) SyncAll(trackings []*models.Tracking) (chan *models.Tracking, chan error, chan bool) {
 	trackingCh := make(chan *models.Tracking)
 	errCh := make(chan error)
+	doneCh := make(chan bool)
+
+	workerFinishedCount := 0
 
 	worker := func(tracking *models.Tracking) {
 		_, err := s.Update(tracking)
@@ -120,18 +123,25 @@ func (s *trackingService) SyncAll(trackings []*models.Tracking) (chan *models.Tr
 		} else {
 			trackingCh <- tracking
 		}
+
+		if workerFinishedCount++; workerFinishedCount == len(trackings) {
+			doneCh <- true
+		}
 	}
 
 	for _, tracking := range trackings {
 		go worker(tracking)
 	}
 
-	return trackingCh, errCh
+	return trackingCh, errCh, doneCh
 }
 
-func (s *trackingService) SyncOnlyUpdated(trackings []*models.Tracking) (chan *models.Tracking, chan error) {
+func (s *trackingService) SyncOnlyUpdated(trackings []*models.Tracking) (chan *models.Tracking, chan error, chan bool) {
 	trackingCh := make(chan *models.Tracking)
 	errCh := make(chan error)
+	doneCh := make(chan bool)
+
+	workerFinishedCount := 0
 
 	worker := func(tracking *models.Tracking) {
 		updated, err := s.Update(tracking)
@@ -140,13 +150,17 @@ func (s *trackingService) SyncOnlyUpdated(trackings []*models.Tracking) (chan *m
 		} else if updated {
 			trackingCh <- tracking
 		}
+
+		if workerFinishedCount++; workerFinishedCount == len(trackings) {
+			doneCh <- true
+		}
 	}
 
 	for _, tracking := range trackings {
 		go worker(tracking)
 	}
 
-	return trackingCh, errCh
+	return trackingCh, errCh, doneCh
 }
 
 func (s *trackingService) GetAllGroupedByUser() (map[*models.User][]*models.Tracking, error) {

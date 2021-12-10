@@ -93,10 +93,9 @@ func (h *tgbotTrackingHandler) GetAll(chatID int64) {
 		h.bot.Send(tgbotapi.NewMessage(chatID, text))
 	}
 
-	trackingCh, errCh := h.service.SyncAll(trackings)
-	i := 0
+	trackingCh, errCh, doneCh := h.service.SyncAll(trackings)
 
-	for i < len(trackings) {
+	for {
 		select {
 		case tracking := <-trackingCh:
 			deleteText := localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -126,9 +125,9 @@ func (h *tgbotTrackingHandler) GetAll(chatID int64) {
 		case err := <-errCh:
 			h.bot.Send(tgbotapi.NewMessage(chatID, errsUtil.GetErrorMessage(err, localizer)))
 			return
+		case _ = <-doneCh:
+			return
 		}
-
-		i++
 	}
 }
 
@@ -152,11 +151,9 @@ func (h *tgbotTrackingHandler) CheckUpdates() {
 
 	for user, trackings := range groupedByUser {
 		localizer := h.i18nHelper.MustGetLocalizer(user.ChatID)
-		trackingCh, errCh := h.service.SyncOnlyUpdated(trackings)
+		trackingCh, errCh, doneCh := h.service.SyncOnlyUpdated(trackings)
 
-		i := 0
-
-		for i < len(trackings) {
+		for {
 			select {
 			case tracking := <-trackingCh:
 				infoText := localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -179,9 +176,9 @@ func (h *tgbotTrackingHandler) CheckUpdates() {
 			case err := <-errCh:
 				h.bot.Send(tgbotapi.NewMessage(user.ChatID, errsUtil.GetErrorMessage(err, localizer)))
 				return
+			case _ = <-doneCh:
+				return
 			}
-
-			i++
 		}
 	}
 }
