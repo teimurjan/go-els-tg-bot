@@ -40,15 +40,10 @@ type Ship24ResponseData struct {
 			TrackingNumber string   `json:"tracking_number"`
 			CrawlerCodes   []string `json:"crawler_codes"`
 		} `json:"tracking_numbers"`
-		ParcelIdentifier       string `json:"parcel_identifier"`
-		OriginCountryCode      string `json:"origin_country_code"`
-		DestinationCountryCode string `json:"destination_country_code"`
-		Weight                 int    `json:"weight"`
-		RecipientCity          string `json:"recipient_city"`
-		Service                string `json:"service"`
-		Dimension              string `json:"dimension"`
-		SignedBy               string `json:"signed_by"`
-		ToUpdated              bool   `json:"to_updated"`
+		ParcelIdentifier       string  `json:"parcel_identifier"`
+		DestinationCountryCode string  `json:"destination_country_code"`
+		Weight                 float64 `json:"weight"`
+		RecipientCity          string  `json:"recipient_city"`
 		Events                 []struct {
 			Datetime       time.Time `json:"datetime"`
 			DispatchCodeID int       `json:"dispatch_code_id,omitempty"`
@@ -158,7 +153,7 @@ func (t *trackingNumberFetcher) Fetch(trackingNumber string) (*models.Tracking, 
 		// Try to get info from ship24
 		ship24Response, err := fetchTrackingAtShip24(trackingNumber)
 		// No tracking info anywhere
-		if err != nil {
+		if err != nil || ship24Response.StatusCode > 201 {
 			return &models.Tracking{
 				Status: EmptyStatusValue,
 				Weight: EmptyWeightValue,
@@ -186,7 +181,7 @@ func (t *trackingNumberFetcher) Fetch(trackingNumber string) (*models.Tracking, 
 		y, m, d := lastEvent.Datetime.Date()
 		return &models.Tracking{
 			Status: lastEvent.Status + " at " + lastEvent.Location + " (" + fmt.Sprint(d, "-", int(m), "-", y) + ")",
-			Weight: strconv.Itoa(ship24ResponseData.Data.Weight),
+			Weight: strconv.Itoa(int(ship24ResponseData.Data.Weight)),
 		}, nil
 	}
 
@@ -294,6 +289,7 @@ func fetchTrackingAtShip24(trackingNumber string) (*http.Response, error) {
 	req.Header.Set("Sec-Fetch-Dest", "empty")
 	req.Header.Set("Referer", "https://www.ship24.com/")
 	req.Header.Set("Accept-Language", "en-US,en;q=0.9,ru;q=0.8,nl;q=0.7")
+	req.Header.Set("X-Ship24-Token", "225,150,128,44,49,54,52,48,48,54,54,52,49,54,54,48,48,44,225,150,130")
 
 	return http.DefaultClient.Do(req)
 }

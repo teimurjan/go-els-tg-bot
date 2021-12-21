@@ -56,13 +56,6 @@ Run migrations:
 goose -dir migrations/postgresql postgres "Here is your DB url" up
 ```
 
-Install [dep](https://golang.github.io/dep/).
-Run:
-
-```
-dep ensure
-```
-
 Finally, start the bot:
 
 ```
