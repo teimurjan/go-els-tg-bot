@@ -151,33 +151,59 @@ func (h *tgbotTrackingHandler) CheckUpdates() {
 
 	for user, trackings := range groupedByUser {
 		localizer := h.i18nHelper.MustGetLocalizer(user.ChatID)
-		trackingCh, errCh, doneCh := h.service.SyncOnlyUpdated(trackings)
 
-		for {
-			select {
-			case tracking := <-trackingCh:
-				infoText := localizer.MustLocalize(&i18n.LocalizeConfig{
-					MessageID:    "trackingInfo",
-					TemplateData: tracking,
-				})
-				text := localizer.MustLocalize(&i18n.LocalizeConfig{
-					DefaultMessage: &i18n.Message{
-						ID:    "trackingUpdated",
-						Other: "❗️❗️❗️ Your order status has been changed ❗️❗️❗️",
-					},
-				}) + "\n\n" + infoText
+		trackings := h.service.GetOnlyUpdated(trackings)
+		for _, tracking := range trackings {
+			infoText := localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID:    "trackingInfo",
+				TemplateData: tracking,
+			})
+			text := localizer.MustLocalize(&i18n.LocalizeConfig{
+				DefaultMessage: &i18n.Message{
+					ID:    "trackingUpdated",
+					Other: "❗️❗️❗️ Your order status has been changed ❗️❗️❗️",
+				},
+			}) + "\n\n" + infoText
 
-				msg := tgbotapi.NewMessage(
-					user.ChatID,
-					text,
-				)
-				msg.ParseMode = tgbotapi.ModeMarkdown
-				h.bot.Send(msg)
-			case err := <-errCh:
-				h.bot.Send(tgbotapi.NewMessage(user.ChatID, errsUtil.GetErrorMessage(err, localizer)))
-			case <-doneCh:
-				return
-			}
+			msg := tgbotapi.NewMessage(
+				user.ChatID,
+				text,
+			)
+			msg.ParseMode = tgbotapi.ModeMarkdown
+			h.bot.Send(msg)
 		}
 	}
+
+	// TODO: investigate why channels do not work with render.com's cron jobs
+	// for user, trackings := range groupedByUser {
+	// 	localizer := h.i18nHelper.MustGetLocalizer(user.ChatID)
+	// 	trackingCh, errCh, doneCh := h.service.SyncOnlyUpdated(trackings)
+
+	// 	for {
+	// 		select {
+	// 		case tracking := <-trackingCh:
+	// 			infoText := localizer.MustLocalize(&i18n.LocalizeConfig{
+	// 				MessageID:    "trackingInfo",
+	// 				TemplateData: tracking,
+	// 			})
+	// 			text := localizer.MustLocalize(&i18n.LocalizeConfig{
+	// 				DefaultMessage: &i18n.Message{
+	// 					ID:    "trackingUpdated",
+	// 					Other: "❗️❗️❗️ Your order status has been changed ❗️❗️❗️",
+	// 				},
+	// 			}) + "\n\n" + infoText
+
+	// 			msg := tgbotapi.NewMessage(
+	// 				user.ChatID,
+	// 				text,
+	// 			)
+	// 			msg.ParseMode = tgbotapi.ModeMarkdown
+	// 			h.bot.Send(msg)
+	// 		case err := <-errCh:
+	// 			h.bot.Send(tgbotapi.NewMessage(user.ChatID, errsUtil.GetErrorMessage(err, localizer)))
+	// 		case <-doneCh:
+	// 			return
+	// 		}
+	// 	}
+	// }
 }

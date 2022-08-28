@@ -141,6 +141,19 @@ func (s *trackingService) SyncAll(trackings []*models.Tracking) (chan *models.Tr
 	return trackingCh, errCh, doneCh
 }
 
+func (s *trackingService) GetOnlyUpdated(trackings []*models.Tracking) []*models.Tracking {
+	updatedTrackings := make([]*models.Tracking, 0)
+
+	for _, tracking := range trackings {
+		updated, err := s.Update(tracking)
+		if err == nil && updated {
+			updatedTrackings = append(updatedTrackings, tracking)
+		}
+	}
+
+	return updatedTrackings
+}
+
 func (s *trackingService) SyncOnlyUpdated(trackings []*models.Tracking) (chan *models.Tracking, chan error, chan bool) {
 	trackingCh := make(chan *models.Tracking)
 	errCh := make(chan error)

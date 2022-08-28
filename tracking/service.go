@@ -11,5 +11,6 @@ type TrackingService interface {
 	Delete(trackingID int64) error
 	SyncAll(trackings []*models.Tracking) (chan *models.Tracking, chan error, chan bool)
 	SyncOnlyUpdated(trackings []*models.Tracking) (chan *models.Tracking, chan error, chan bool)
+	GetOnlyUpdated(trackings []*models.Tracking) []*models.Tracking
 	GetAllGroupedByUser() (map[*models.User][]*models.Tracking, error)
 }
