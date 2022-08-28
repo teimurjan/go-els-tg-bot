@@ -117,14 +117,19 @@ func (s *trackingService) SyncAll(trackings []*models.Tracking) (chan *models.Tr
 	workerFinishedCount := 0
 
 	worker := func(tracking *models.Tracking) {
+		s.logger.Info(fmt.Sprintf("Synchronizing tracking information for %s started.", tracking.Value))
+
 		_, err := s.Update(tracking)
 		if err != nil {
+			s.logger.Info(fmt.Sprintf("Synchronizing tracking information for %s ended with an error %v.", tracking.Value, err))
 			errCh <- err
 		} else {
+			s.logger.Info(fmt.Sprintf("Synchronizing tracking information for %s got a result.", tracking.Value))
 			trackingCh <- tracking
 		}
 
 		if workerFinishedCount++; workerFinishedCount == len(trackings) {
+			s.logger.Info(fmt.Sprintf("Synchronizing tracking information for %s ended.", tracking.Value))
 			doneCh <- true
 		}
 	}
@@ -144,14 +149,19 @@ func (s *trackingService) SyncOnlyUpdated(trackings []*models.Tracking) (chan *m
 	workerFinishedCount := 0
 
 	worker := func(tracking *models.Tracking) {
+		s.logger.Info(fmt.Sprintf("Synchronizing tracking information for %s started.", tracking.Value))
+
 		updated, err := s.Update(tracking)
 		if err != nil {
+			s.logger.Info(fmt.Sprintf("Synchronizing tracking information for %s ended with an error %v.", tracking.Value, err))
 			errCh <- err
 		} else if updated {
+			s.logger.Info(fmt.Sprintf("Synchronizing tracking information for %s got a result.", tracking.Value))
 			trackingCh <- tracking
 		}
 
 		if workerFinishedCount++; workerFinishedCount == len(trackings) {
+			s.logger.Info(fmt.Sprintf("Synchronizing tracking information for %s ended.", tracking.Value))
 			doneCh <- true
 		}
 	}
