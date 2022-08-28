@@ -175,8 +175,7 @@ func (h *tgbotTrackingHandler) CheckUpdates() {
 				h.bot.Send(msg)
 			case err := <-errCh:
 				h.bot.Send(tgbotapi.NewMessage(user.ChatID, errsUtil.GetErrorMessage(err, localizer)))
-				return
-			case _ = <-doneCh:
+			case <-doneCh:
 				return
 			}
 		}

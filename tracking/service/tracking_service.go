@@ -167,6 +167,7 @@ func (s *trackingService) SyncOnlyUpdated(trackings []*models.Tracking) (chan *m
 	}
 
 	for _, tracking := range trackings {
+		s.logger.Info(fmt.Sprintf("Passing tracking %s to the worker.", tracking.Value))
 		go worker(tracking)
 	}
 
@@ -174,6 +175,8 @@ func (s *trackingService) SyncOnlyUpdated(trackings []*models.Tracking) (chan *m
 }
 
 func (s *trackingService) GetAllGroupedByUser() (map[*models.User][]*models.Tracking, error) {
+	s.logger.Info("Getting trackings grouped by user.")
+
 	groupedByUser := make(map[*models.User][]*models.Tracking)
 	users, err := s.userRepo.GetAll()
 	if err != nil {
@@ -181,14 +184,19 @@ func (s *trackingService) GetAllGroupedByUser() (map[*models.User][]*models.Trac
 		return groupedByUser, err
 	}
 
+	s.logger.Info("All the users are retreived.")
+
 	for _, user := range users {
+		s.logger.Info(fmt.Sprintf("Getting trackings for user %d.", user.ID))
+
 		trackings, err := s.trackingRepo.GetForUser(user.ID)
 		if err != nil {
 			s.logger.Error(err)
 			return groupedByUser, err
 		}
-
 		groupedByUser[user] = trackings
+
+		s.logger.Info(fmt.Sprintf("User %d has %d trackings.", user.ID, len(trackings)))
 	}
 
 	return groupedByUser, nil
