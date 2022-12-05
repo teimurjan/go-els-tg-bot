@@ -1,6 +1,6 @@
 module github.com/teimurjan/go-els-tg-bot
 
-go 1.17
+go 1.19
 
 require (
 	github.com/BurntSushi/toml v0.4.1
@@ -22,16 +22,12 @@ require (
 require (
 	github.com/andybalholm/cascadia v1.0.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/golang/protobuf v1.3.1 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.1 // indirect
-	github.com/nicksnyder/go-i18n v2.1.1+incompatible // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/r3labs/diff/v2 v2.14.2 // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
-	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
 	golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2 // indirect
 	golang.org/x/net v0.0.0-20190603091049-60506f45cf65 // indirect
-	golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a // indirect
+	golang.org/x/sys v0.3.0 // indirect
 	google.golang.org/appengine v1.6.6 // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 )
