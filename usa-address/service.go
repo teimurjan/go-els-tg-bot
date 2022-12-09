@@ -11,7 +11,7 @@ type AddressUpdate struct {
 }
 
 type UsaAddressService interface {
-	GetAddressWithDiff() (*models.UsaAddress, diff.Changelog, error)
+	CheckAddressUpdates() (*models.UsaAddress, *models.UsaAddress, diff.Changelog, error)
 	GetFirst() (*models.UsaAddress, error)
 	Delete() error
 }

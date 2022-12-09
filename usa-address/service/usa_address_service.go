@@ -54,14 +54,14 @@ func (s *usaAddressService) GetFirst() (*models.UsaAddress, error) {
 	return address, nil
 }
 
-func (s *usaAddressService) GetAddressWithDiff() (*models.UsaAddress, diff.Changelog, error) {
+func (s *usaAddressService) CheckAddressUpdates() (*models.UsaAddress, *models.UsaAddress, diff.Changelog, error) {
 	address, err := s.GetFirst()
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 	newAddress, err := s.fetcher.Fetch()
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	changelog, err := diff.Diff(address, newAddress)
@@ -71,7 +71,7 @@ func (s *usaAddressService) GetAddressWithDiff() (*models.UsaAddress, diff.Chang
 		s.usaAddressRepo.Update(newAddress)
 	}
 
-	return address, changelog, nil
+	return address, newAddress, changelog, nil
 }
 
 func (s *usaAddressService) Delete() error {

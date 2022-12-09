@@ -57,7 +57,7 @@ func (h *tgbotUsaAddressHandler) CheckDiff() {
 		return
 	}
 
-	address, changelog, err := h.service.GetAddressWithDiff()
+	address, newAddress, changelog, err := h.service.CheckAddressUpdates()
 	if err != nil || len(changelog) == 0 {
 		return
 	}
@@ -77,7 +77,7 @@ func (h *tgbotUsaAddressHandler) CheckDiff() {
 		localizer := h.i18nHelper.MustGetLocalizer(user.ChatID)
 		infoText := localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:    "usaAddressInfo",
-			TemplateData: address,
+			TemplateData: newAddress,
 		})
 		text := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: &i18n.Message{
